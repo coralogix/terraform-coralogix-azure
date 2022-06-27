@@ -21,7 +21,7 @@ variable "subsystem_name" {
 }
 
 variable "package_path" {
-  description = "The path to custom function's bundle"
+  description = "The path to a custom function's bundle"
   type        = string
   default     = null
 }
