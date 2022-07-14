@@ -2,6 +2,33 @@
 
 Manage the function app which reads logs from `eventhub` and sends them to your *Coralogix* account.
 
+## Usage
+
+```hcl
+terraform {
+  required_providers {
+    azurerm = {
+      source = "hashicorp/azurerm"
+      version = "~> 3.11"
+    }
+  }
+}
+
+provider "azurerm" {
+  features {}
+}
+
+module "eventhub" {
+  source = "coralogix/azure/coralogix//modules/eventhub"
+
+  coralogix_region   = "Europe"
+  private_key        = "2f55c873-c0cf-4523-82d4-c3b68ee6cb46"
+  application_name   = "azure"
+  subsystem_name     = "eventhub-coralogix"
+  azure_resource_group = "basic-resource-group"
+  azure_eventhub_namespace_connection_string_primary = "Endpoint=sb://eventbutnamespace.servicebus.windows.net/;SharedAccessKeyName=readonly;SharedAccessKey=YBtHnn3X8jGQ+GNjCFGE7CYVHBy0JgLsfTDKYsKL8TI="
+}
+```
 ## Important
 
 The function app will search for a specific eventhub called `coralogix`.

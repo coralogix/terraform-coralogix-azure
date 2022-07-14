@@ -5,6 +5,19 @@
 `eventhub`:
 
 ```hcl
+terraform {
+  required_providers {
+    azurerm = {
+      source = "hashicorp/azurerm"
+      version = "~> 3.11"
+    }
+  }
+}
+
+provider "azurerm" {
+  features {}
+}
+
 module "eventhub" {
   source = "coralogix/azure/coralogix//modules/eventhub"
 
