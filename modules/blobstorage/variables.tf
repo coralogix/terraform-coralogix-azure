@@ -2,6 +2,10 @@ variable "coralogix_region" {
   description = "The Coralogix location region, possible options are [Europe, Europe2, India, Singapore, US]"
   type        = string
   default     = "Europe"
+    validation {
+    condition = contains(["Europe","Europe2","India","Singapore","US"], var.coralogix_region)
+    error_message = "The coralogix region must be on of these values: [Europe, Europe2, India, Singapore, US]."
+  }
 }
 
 variable "private_key" {
@@ -27,11 +31,17 @@ variable "package_path" {
 }
 
 variable "azure_resource_group" {
-  description = "The resource group name that the eventhub belong to"
+  description = "The resource group name that your account-storage belong to"
   type = string
 }
 
-variable "azure_eventhub_namespace_connection_string_primary" {
-  description = "The eventhub-namespace primary connection string with read capabilities"
+variable "azure_account_storage_connection_string" {
+  description = "The account-storage key connection string"
   type = string
+}
+
+variable "azure_function_newline_pattern" {
+  description = "The new line pattern in your log files. will be used by the function to split the lines. default: (?:\r\n|\r|\n)"
+  type = string
+  default = "(?:\r\n|\r|\n)"
 }

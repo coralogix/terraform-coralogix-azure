@@ -10,7 +10,7 @@ locals {
 }
 
 resource "random_string" "this" {
-  length  = 6
+  length  = 12
   special = false
   lower = true
   upper = false
@@ -21,7 +21,7 @@ data "azurerm_resource_group" "main-resource-group" {
 }
 
 resource "azurerm_storage_account" "crx-storage" {
-  name                     = "coralogixstorage${random_string.this.result}"
+  name                     = "crxstorage${random_string.this.result}"
   resource_group_name      = var.azure_resource_group
   location                 = data.azurerm_resource_group.main-resource-group.location
   account_tier             = "Standard"
@@ -102,7 +102,7 @@ resource "azurerm_linux_function_app" "crx-function" {
     CORALOGIX_SUB_SYSTEM = var.subsystem_name
     EventHubConnection = var.azure_eventhub_namespace_connection_string_primary
     AzureWebJobsStorage = azurerm_storage_account.crx-storage.primary_connection_string
-    CORALOGIX_URL = "https://${lookup(local.coralogix_regions, var.coralogix_region, "Europe")}/api/v1/logs"
+    CORALOGIX_URL = "https://${local.coralogix_regions[var.coralogix_region]}/api/v1/logs"
     FUNCTIONS_WORKER_RUNTIME = "node"
     WEBSITE_NODE_DEFAULT_VERSION = "~12"
     FUNCTION_APP_EDIT_MODE = "readonly"

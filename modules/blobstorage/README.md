@@ -1,16 +1,61 @@
-# eventhub
+# blobstorage
 
-Manage the function app which reads logs from `eventhub` and sends them to your *Coralogix* account.
+Manage the function app which reads logs from files in your account storage and sends them to your *Coralogix* account.
 
+## Usage
+
+```hcl
+terraform {
+  required_providers {
+    azurerm = {
+      source = "hashicorp/azurerm"
+      version = "~> 3.11"
+    }
+  }
+}
+
+provider "azurerm" {
+  features {}
+}
+
+module "bloblstorage" {
+  source = "coralogix/azure/coralogix//modules/blobstorage"
+
+  coralogix_region   = "Europe"
+  private_key        = "3e3a63fc-9e5b-4ca2-a89d-17287c565ddf"
+  application_name   = "azure"
+  subsystem_name     = "blobstorage-coralogix"
+  azure_resource_group = "basic-resource-group"
+  azure_account_storage_connection_string = "DefaultEndpointsProtocol=https;AccountName=accountstorage;AccountKey=lFlEx8EsrgiTcZPL5PnRRXRD-rm3ltZ/ih3gjSkbf1B/fZh+H26sJ2YN7lN1cQNiXrg9wBbanckU+ASteBjl0A==;EndpointSuffix=core.windows.net"
+}
+```
 ## Important
 
-The function app will search for a specific eventhub called `coralogix`.
-to replace into a different eventhub name:
+The function app will search for a specific container called `logs`.
+to replace into a different container name:
 
 * extract the package.zip
-* change the value of 'eventHubName' field inside Eventhub/function.json into the desired eventhub name.
+* change the value of 'bindings.path' field inside BlobStorage/function.json into the desired container name (keep the '/{name}' at the end).
 * zip all the contents of the app.
 * provide the input 'package_path' to the newly created zip file.
+
+example: 
+
+```json
+{
+  "scriptFile": "../dist/BlobStorage/index.js",
+  "disabled": false,
+  "bindings": [
+    {
+      "name": "blob",
+      "type": "blobTrigger",
+      "direction": "in",
+      "path": "<YOUR_CONTAINER_NAME>/{name}",
+      "connection":"InputStorage"
+    }
+  ]
+}
+```
 
 ## Requirements
 
@@ -35,8 +80,9 @@ to replace into a different eventhub name:
 | <a name="input_application_name"></a> [application\_name](#input\_application\_name) | The name of your application | `string` | n/a | yes |
 | <a name="input_subsystem_name"></a> [subsystem\_name](#input\_subsystem\_name) | The subsystem name of your application | `string` | n/a | yes |
 | <a name="input_package_path"></a> [package\_path](#input\_package\_path) | The path to a custom function's bundle | `string` | n/a | no |
-| <a name="input_azure_resource_group"></a> [azure\_resource\_group](#input\_azure\_resource\_group) | The resource group name that the eventhub belong to | `string` | n/a | yes |
-| <a name="input_azure_eventhub_namespace_connection_string_primary"></a> [azure\_eventhub\_connection\_string](#input\_azure\_eventhub\_namespace\_connection\_string\_primary) | The eventhub-namespace primary connection string with read capabilities | `string` | n/a | yes |
+| <a name="input_azure_resource_group"></a> [azure\_resource\_group](#input\_azure\_resource\_group) | The resource group name that your account-storage belong to | `string` | n/a | yes |
+| <a name="azure_account_storage_connection_string"></a> [azure\_account\_storage\_connection\_string](#input\_azure\account\storage\_connection\_string) | The account-storage key connection string | `string` | n/a | yes |
+| <a name="azure_function_newline_pattern"></a> [azure\_function\_newline\_pattern](#input\_azure\_function\_newline\_pattern) | The new line pattern in your log files. will be used by the function to split the lines. | `string` | (?:\r\n\|\r\|\n) | no |
 
 ## Outputs
 
