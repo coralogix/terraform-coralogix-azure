@@ -2,7 +2,7 @@
 
 ## Usage
 
-configuration: 
+`configuration`: 
 
 ```hcl
 terraform {
