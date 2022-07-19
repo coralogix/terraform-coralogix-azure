@@ -1,5 +1,5 @@
 locals {
-  function_name = "Coralogix-functionapp-${random_string.this.result}"
+  function_name = "crx-functionapp-${random_string.this.result}"
   coralogix_regions = {
     Europe    = "api.coralogix.com"
     Europe2   = "api.eu2.coralogix.com"
@@ -100,8 +100,9 @@ resource "azurerm_linux_function_app" "crx-function" {
     CORALOGIX_PRIVATE_KEY = var.private_key
     CORALOGIX_APP_NAME = var.application_name
     CORALOGIX_SUB_SYSTEM = var.subsystem_name
-    EventHubConnection = var.azure_eventhub_namespace_connection_string_primary
+    InputStorage = var.azure_account_storage_connection_string
     AzureWebJobsStorage = azurerm_storage_account.crx-storage.primary_connection_string
+    NEWLINE_PATTERN = var.azure_function_newline_pattern
     CORALOGIX_URL = "https://${local.coralogix_regions[var.coralogix_region]}/api/v1/logs"
     FUNCTIONS_WORKER_RUNTIME = "node"
     WEBSITE_NODE_DEFAULT_VERSION = "~12"
