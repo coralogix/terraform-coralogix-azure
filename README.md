@@ -2,7 +2,7 @@
 
 ## Usage
 
-`eventhub`:
+`configuration`: 
 
 ```hcl
 terraform {
@@ -17,7 +17,11 @@ terraform {
 provider "azurerm" {
   features {}
 }
+```
 
+`eventhub`:
+
+```hcl
 module "eventhub" {
   source = "coralogix/azure/coralogix//modules/eventhub"
 
@@ -30,6 +34,20 @@ module "eventhub" {
 }
 ```
 
+`blobstorage`:
+
+```hcl
+module "bloblstorage" {
+  source = "coralogix/azure/coralogix//modules/blobstorage"
+
+  coralogix_region   = "Europe"
+  private_key        = "3e3a63fc-9e5b-4ca2-a89d-17287c565ddf"
+  application_name   = "azure"
+  subsystem_name     = "blobstorage-coralogix"
+  azure_resource_group = "basic-resource-group"
+  azure_account_storage_connection_string = "DefaultEndpointsProtocol=https;AccountName=accountstorage;AccountKey=lFlEx8EsrgiTcZPL5PnRRXRD-rm3ltZ/ih3gjSkbf1B/fZh+H26sJ2YN7lN1cQNiXrg9wBbanckU+ASteBjl0A==;EndpointSuffix=core.windows.net"
+}
+```
 ## Authors
 
 Module is maintained by [Coralogix](https://github.com/coralogix).
