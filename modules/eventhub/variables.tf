@@ -1,41 +1,49 @@
-variable "coralogix_region" {
+variable "CoralogixRegion" {
   description = "The Coralogix location region, possible options are [Europe, Europe2, India, Singapore, US]"
   type        = string
-  default     = "Europe"
     validation {
-    condition = contains(["Europe","Europe2","India","Singapore","US"], var.coralogix_region)
+    condition = contains(["Europe","Europe2","India","Singapore","US"], var.CoralogixRegion)
     error_message = "The coralogix region must be on of these values: [Europe, Europe2, India, Singapore, US]."
   }
 }
 
-variable "private_key" {
+variable "CoralogixPrivateKey" {
   description = "The Coralogix private key which is used to validate your authenticity"
   type        = string
   sensitive   = true
 }
 
-variable "application_name" {
+variable "CoralogixApplication" {
   description = "The name of your application"
   type        = string
 }
 
-variable "subsystem_name" {
+variable "CoralogixSubsystem" {
   description = "The subsystem name of your application"
   type        = string
 }
 
-variable "package_path" {
-  description = "The path to a custom function's bundle"
-  type        = string
-  default     = null
-}
-
-variable "azure_resource_group" {
-  description = "The resource group name that the eventhub belong to"
+variable "FunctionResourceGroupName" {
+  description = "The name of the resource group into which to deploy the Function App"
   type = string
 }
 
-variable "azure_eventhub_namespace_connection_string_primary" {
-  description = "The eventhub-namespace primary connection string with read capabilities"
+variable "FunctionStorageAccountName" {
+  description = "The name of the storage account that the Function App will use"
+  type = string
+}
+
+variable "EventhubResourceGroupName" {
+  description = "The name of the resource group that the eventhub belong to"
+  type = string
+}
+
+variable "EventhubNamespace" {
+  description = "The name of the EventHub Namespace."
+  type = string
+}
+
+variable "EventhubInstanceName" {
+  description = "The name of the EventHub Instance."
   type = string
 }
