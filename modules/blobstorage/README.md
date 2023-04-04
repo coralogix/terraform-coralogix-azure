@@ -6,7 +6,7 @@ Manage the function app which reads logs from `Blobs` in your account storage an
 
 A Resource Group and Storage Account to be used by your Function App must be provided as inputs to the Terraform module.
 
-The Blob Container must be pre-existing. The Storage Account associated with the Blob Container must be configured for Public Access.
+The Blob Container must be pre-existing. The Storage Account associated with the Blob Container must be configured for Public Access. Additionally, a configured "Storage Accounts (Blob & GPv2)" EventGrid System Topic must be configured for the Storage Account.
 
 ## Usage
 
