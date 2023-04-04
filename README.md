@@ -9,7 +9,7 @@ terraform {
   required_providers {
     azurerm = {
       source = "hashicorp/azurerm"
-      version = "~> 3.11"
+      version = "~> 3.50"
     }
   }
 }
@@ -25,12 +25,15 @@ provider "azurerm" {
 module "eventhub" {
   source = "coralogix/azure/coralogix//modules/eventhub"
 
-  coralogix_region   = "Europe"
-  private_key        = "2f55c873-c0cf-4523-82d4-c3b68ee6cb46"
-  application_name   = "azure"
-  subsystem_name     = "eventhub-coralogix"
-  azure_resource_group = "basic-resource-group"
-  azure_eventhub_namespace_connection_string_primary = "Endpoint=sb://eventbutnamespace.servicebus.windows.net/;SharedAccessKeyName=readonly;SharedAccessKey=YBtHnn3X8jGQ+GNjCFGE7CYVHBy0JgLsfTDKYsKL8TI="
+  CoralogixRegion = "Europe"
+  CoralogixPrivateKey = < Private Key >
+  CoralogixApplication = "Azure"
+  CoralogixSubsystem = "EventHub"
+  FunctionResourceGroupName = < Function ResourceGroup Name >
+  FunctionStorageAccountName = < Function StorageAccount Name >
+  EventhubInstanceName = < Name of EventHub Instance >
+  EventhubNamespace = < Name of Eventhub Namespace >
+  EventhubResourceGroupName = < Name of Eventhub ResourceGroup >
 }
 ```
 
@@ -40,14 +43,39 @@ module "eventhub" {
 module "bloblstorage" {
   source = "coralogix/azure/coralogix//modules/blobstorage"
 
-  coralogix_region   = "Europe"
-  private_key        = "3e3a63fc-9e5b-4ca2-a89d-17287c565ddf"
-  application_name   = "azure"
-  subsystem_name     = "blobstorage-coralogix"
-  azure_resource_group = "basic-resource-group"
-  azure_account_storage_connection_string = "DefaultEndpointsProtocol=https;AccountName=accountstorage;AccountKey=lFlEx8EsrgiTcZPL5PnRRXRD-rm3ltZ/ih3gjSkbf1B/fZh+H26sJ2YN7lN1cQNiXrg9wBbanckU+ASteBjl0A==;EndpointSuffix=core.windows.net"
+  CoralogixRegion = "Europe"
+  CoralogixPrivateKey = < Private Key >
+  CoralogixApplication = "Azure"
+  CoralogixSubsystem = "EventHub"
+  FunctionResourceGroupName = < Function ResourceGroup Name >
+  FunctionStorageAccountName = < Function StorageAccount Name >
+  BlobContainerName = < Blob Container Name>
+  BlobContainerStorageAccount = < Blob Container Storage Account Name >
+  BlobContainerResourceGroupName = < Blob Container Resource Group Name>
+  EventGridSystemTopicName = < EventGrid System Topic Name >
+  NewlinePattern = < Newline Pattern >
 }
 ```
+
+`storagequeue`:
+
+```hcl
+module "storagequeue" {
+  source = "coralogix/azure/coralogix//modules/storagequeue"
+
+  CoralogixRegion = "Europe"
+  CoralogixPrivateKey = < Private Key >
+  CoralogixApplication = "Azure"
+  CoralogixSubsystem = "EventHub"
+  FunctionResourceGroupName = < Function ResourceGroup Name >
+  FunctionStorageAccountName = < Function StorageAccount Name >
+  StorageQueueName = < Name of the StorageQueue >
+  StorageQueueStorageAccount = < Name of the StorageQueue Storage Account >
+  StorageQueueResourceGroupName = < Name of the StorageQueue Resource Group >
+}
+```
+
+
 ## Authors
 
 Module is maintained by [Coralogix](https://github.com/coralogix).

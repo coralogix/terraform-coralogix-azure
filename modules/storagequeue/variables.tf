@@ -33,28 +33,17 @@ variable "FunctionStorageAccountName" {
   type        = string
 }
 
-variable "BlobContainerName" {
-  description = "The name of the Blob Container."
+variable "StorageQueueName" {
+  description = "The name of the StorageQueue."
   type        = string
 }
 
-variable "BlobContainerStorageAccount" {
-  description = "The name of the Storage Account containing the Blob Container."
+variable "StorageQueueStorageAccount" {
+  description = "The name of the Storage Account containing the StorageQueue."
   type        = string
 }
 
-variable "BlobContainerResourceGroupName" {
+variable "StorageQueueResourceGroupName" {
   description = "The name of the resource group that contains the Storage Account"
   type        = string
-}
-
-variable "EventGridSystemTopicName" {
-  description = "The name of the Event Grid System Topic"
-  type        = string
-}
-
-variable "NewlinePattern" {
-  description = "The pattern to use to split the blob into lines"
-  type        = string
-  default     = "(?:\\r\\n|\\r|\\n)"
 }

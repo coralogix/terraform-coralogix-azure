@@ -1,113 +1,102 @@
 locals {
-  function_name = "crx-functionapp-${random_string.this.result}"
+  function_name = join("-", ["BlobStorage", substr(var.BlobContainerName, 0, 27), random_string.this.result])
   coralogix_regions = {
-    Europe    = "api.coralogix.com"
-    Europe2   = "api.eu2.coralogix.com"
-    India     = "api.app.coralogix.in"
-    Singapore = "api.coralogixsg.com"
-    US        = "api.coralogix.us"
+    Europe    = "ingress.coralogix.com"
+    Europe2   = "ingress.eu2.coralogix.com"
+    India     = "ingress.coralogix.in"
+    Singapore = "ingress.coralogixsg.com"
+    US        = "ingress.coralogix.us"
   }
 }
 
 resource "random_string" "this" {
-  length  = 12
+  length  = 13
   special = false
-  lower = true
-  upper = false
+  lower   = true
+  upper   = false
 }
 
-data "azurerm_resource_group" "main-resource-group" {
-  name = var.azure_resource_group
+# ------------------------------------------------ BlobStorage ------------------------------------------------
+data "azurerm_resource_group" "blobstorage-resourcegroup" {
+  name = var.BlobContainerResourceGroupName
 }
 
-resource "azurerm_storage_account" "crx-storage" {
-  name                     = "crxstorage${random_string.this.result}"
-  resource_group_name      = var.azure_resource_group
-  location                 = data.azurerm_resource_group.main-resource-group.location
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
+data "azurerm_storage_account" "blobstorage-storageaccount" {
+  name                = var.BlobContainerStorageAccount
+  resource_group_name = var.BlobContainerResourceGroupName
 }
 
-resource "azurerm_storage_container" "crx-deployments" {
-    name = "coralogix-function-releases-${random_string.this.result}"
-    storage_account_name = "${azurerm_storage_account.crx-storage.name}"
-    container_access_type = "private"
+# ------------------------------------------------ EventGrid ------------------------------------------------
+data "azurerm_eventgrid_system_topic" "eventgrid-systemtopic" {
+  name                = var.EventGridSystemTopicName
+  resource_group_name = var.BlobContainerResourceGroupName
 }
 
-resource "azurerm_storage_blob" "crx-appcode" {
-    name = "functionapp.zip"
-    storage_account_name = "${azurerm_storage_account.crx-storage.name}"
-    storage_container_name = "${azurerm_storage_container.crx-deployments.name}"
-    type = "Block"
-    source = coalesce(var.package_path, "${path.module}/dist/package.zip")
-    content_md5 = filemd5(coalesce(var.package_path, "${path.module}/dist/package.zip"))
-
+resource "azurerm_eventgrid_system_topic_event_subscription" "eventgrid-subscription" {
+  name                = local.function_name
+  system_topic        = var.EventGridSystemTopicName
+  resource_group_name = var.BlobContainerResourceGroupName
+  azure_function_endpoint {
+    function_id                       = "${azurerm_linux_function_app.blobstorage-function.id}/functions/BlobViaEventGrid"
+    max_events_per_batch              = 1
+    preferred_batch_size_in_kilobytes = 64
+  }
+  included_event_types = ["Microsoft.Storage.BlobCreated"]
+  retry_policy {
+    max_delivery_attempts = 30
+    event_time_to_live    = 1440
+  }
+  depends_on = [azurerm_linux_function_app.blobstorage-function]
 }
 
-resource "azurerm_service_plan" "crx-function-plan" {
-  name                = "coralogix-plan-${random_string.this.result}"
-  resource_group_name = var.azure_resource_group
-  location            = data.azurerm_resource_group.main-resource-group.location
+# ------------------------------------------------ Function App ------------------------------------------------
+data "azurerm_resource_group" "functionRG" {
+  name = var.FunctionResourceGroupName
+}
+
+data "azurerm_storage_account" "functionSA" {
+  name                = var.FunctionStorageAccountName
+  resource_group_name = var.FunctionResourceGroupName
+}
+
+resource "azurerm_service_plan" "consumption-plan" {
+  name                = "${local.function_name}-plan"
+  resource_group_name = var.FunctionResourceGroupName
+  location            = data.azurerm_resource_group.functionRG.location
   os_type             = "Linux"
   sku_name            = "Y1"
 }
 
-data "azurerm_storage_account_sas" "crx-sas" {
-    connection_string = "${azurerm_storage_account.crx-storage.primary_connection_string}"
-    https_only = true
-    start = "2019-01-01"
-    expiry = "2099-12-31"
-    resource_types {
-        object = true
-        container = false
-        service = false
-    }
-    services {
-        blob = true
-        queue = false
-        table = false
-        file = false
-    }
-    permissions {
-        read = true
-        write = false
-        delete = false
-        list = false
-        add = false
-        create = false
-        update = false
-        process = false
-        tag = false
-        filter = false
-    }
+resource "azurerm_application_insights" "crx-appinsights" {
+  name                = "${local.function_name}-appinsights"
+  resource_group_name = var.FunctionResourceGroupName
+  location            = data.azurerm_resource_group.functionRG.location
+  application_type    = "web"
 }
 
-resource "azurerm_linux_function_app" "crx-function" {
-  name                = "coralogix-func-${random_string.this.result}"
-  resource_group_name = var.azure_resource_group
-  location            = data.azurerm_resource_group.main-resource-group.location
-  storage_account_name = azurerm_storage_account.crx-storage.name
-  storage_account_access_key = azurerm_storage_account.crx-storage.primary_access_key
-  service_plan_id      = azurerm_service_plan.crx-function-plan.id
-  functions_extension_version = "~3"
+resource "azurerm_linux_function_app" "blobstorage-function" {
+  name                        = local.function_name
+  resource_group_name         = var.FunctionResourceGroupName
+  location                    = data.azurerm_resource_group.functionRG.location
+  storage_account_name        = var.FunctionStorageAccountName
+  storage_account_access_key  = data.azurerm_storage_account.functionSA.primary_access_key
+  service_plan_id             = azurerm_service_plan.consumption-plan.id
+  functions_extension_version = "~4"
   site_config {
+    application_insights_key               = azurerm_application_insights.crx-appinsights.instrumentation_key
+    application_insights_connection_string = azurerm_application_insights.crx-appinsights.connection_string
     application_stack {
-      node_version = 12
+      node_version = 16
     }
   }
   app_settings = {
     # Environment variable
-    CORALOGIX_PRIVATE_KEY = var.private_key
-    CORALOGIX_APP_NAME = var.application_name
-    CORALOGIX_SUB_SYSTEM = var.subsystem_name
-    InputStorage = var.azure_account_storage_connection_string
-    AzureWebJobsStorage = azurerm_storage_account.crx-storage.primary_connection_string
-    NEWLINE_PATTERN = var.azure_function_newline_pattern
-    CORALOGIX_URL = "https://${local.coralogix_regions[var.coralogix_region]}/api/v1/logs"
-    FUNCTIONS_WORKER_RUNTIME = "node"
-    WEBSITE_NODE_DEFAULT_VERSION = "~12"
-    FUNCTION_APP_EDIT_MODE = "readonly"
-    HASH = "${base64encode(filesha256("${coalesce(var.package_path, "${path.module}/dist/package.zip")}"))}"
-    WEBSITE_RUN_FROM_PACKAGE = "https://${azurerm_storage_account.crx-storage.name}.blob.core.windows.net/${azurerm_storage_container.crx-deployments.name}/${azurerm_storage_blob.crx-appcode.name}${data.azurerm_storage_account_sas.crx-sas.sas}"
+    CORALOGIX_APP_NAME                     = var.CoralogixApplication
+    CORALOGIX_PRIVATE_KEY                  = var.CoralogixPrivateKey
+    CORALOGIX_SUB_SYSTEM                   = var.CoralogixSubsystem
+    CORALOGIX_URL                          = "https://${local.coralogix_regions[var.CoralogixRegion]}/api/v1/logs"
+    BLOB_STORAGE_ACCOUNT_CONNECTION_STRING = data.azurerm_storage_account.blobstorage-storageaccount.primary_connection_string
+    WEBSITE_RUN_FROM_PACKAGE               = "https://coralogix-public.s3.eu-west-1.amazonaws.com/azure-functions-repo/BlobViaEventGrid.zip"
+    NEWLINE_PATTERN                        = var.NewlinePattern
   }
 }

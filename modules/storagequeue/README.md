@@ -1,12 +1,12 @@
-# blobstorage
+# storagequeue
 
-Manage the function app which reads logs from `Blobs` in your account storage and sends them to your *Coralogix* account.
+Manage the function app which reads logs from `storagequeue` and sends them to your *Coralogix* account.
 
 ## Pre-requisites
 
 A Resource Group and Storage Account to be used by your Function App must be provided as inputs to the Terraform module.
 
-The Blob Container must be pre-existing. The Storage Account associated with the Blob Container must be configured for Public Access.
+The StorageQueue to be monitored must be pre-existing. The Storage Account associated with the StorageQueue must be configured for Public Access.
 
 ## Usage
 
@@ -24,8 +24,8 @@ provider "azurerm" {
   features {}
 }
 
-module "bloblstorage" {
-  source = "coralogix/azure/coralogix//modules/blobstorage"
+module "storagequeue" {
+  source = "coralogix/azure/coralogix//modules/storagequeue"
 
   CoralogixRegion = "Europe"
   CoralogixPrivateKey = < Private Key >
@@ -33,11 +33,9 @@ module "bloblstorage" {
   CoralogixSubsystem = "EventHub"
   FunctionResourceGroupName = < Function ResourceGroup Name >
   FunctionStorageAccountName = < Function StorageAccount Name >
-  BlobContainerName = < Blob Container Name>
-  BlobContainerStorageAccount = < Blob Container Storage Account Name >
-  BlobContainerResourceGroupName = < Blob Container Resource Group Name>
-  EventGridSystemTopicName = < EventGrid System Topic Name >
-  NewlinePattern = < Newline Pattern >
+  StorageQueueName = < Name of the StorageQueue >
+  StorageQueueStorageAccount = < Name of the StorageQueue Storage Account >
+  StorageQueueResourceGroupName = < Name of the StorageQueue Resource Group >
 }
 ```
 
@@ -64,8 +62,6 @@ module "bloblstorage" {
 | <a name="input_CoralogixSubsystem"></a> [CoralogixSubsystem](#input\_CoralogixSubsystem) | The subsystem name of your application | `string` | n/a | yes |
 | <a name="input_FunctionResourceGroupName"></a> [FunctionResourceGroupName](#input\_FunctionResourceGroupName) | The name of the resource group into which to deploy the Function App | `string` | n/a | yes |
 | <a name="input_FunctionStorageAccountName"></a> [FunctionStorageAccountName](#input\_FunctionStorageAccountName) | The name of the storage account that the Function App will use | `string` | n/a | yes |
-| <a name="input_BlobContainerName"></a> [BlobContainerName](#input\_BlobContainerName) | The name of the Blob Container | `string` | n/a | yes
-| <a name="input_BlobContainerStorageAccount"></a> [BlobContainerStorageAccount](#input\_BlobContainerStorageAccount) | The name of the Storage Account containing the Blob Container | `string` | n/a | yes
-| <a name="input_BlobContainerResourceGroupName"></a> [BlobContainerResourceGroupName](#input\_BlobContainerResourceGroupName) | The name of the resource group that contains the Storage Account | `string` | n/a | yes
-| <a name="input_EventGridSystemTopicName"></a> [EventGridSystemTopicName](#input\_EventGridSystemTopicName) | The name of the Event Grid System Topic | `string` | n/a | yes
-| <a name="input_NewlinePattern"></a> [NewlinePattern](#input\_NewlinePattern) | The pattern to use to split the blob into lines | `string` | (?:\r\n|\r|\n) | yes
+| <a name="input_StorageQueueName"></a> [StorageQueueName](#input\_StorageQueueName) | The name of the StorageQueue | `string` | n/a | yes |
+| <a name="input_StorageQueueStorageAccount"></a> [StorageQueueStorageAccount](#input\_StorageQueueStorageAccount) | The name of the Storage Account containing the StorageQueue | `string` | n/a | yes |
+| <a name="input_StorageQueueResourceGroupName"></a> [StorageQueueResourceGroupName](#input\_StorageQueueResourceGroupName) | The name of the resource group that contains the Storage Account | `string` | n/a | yes |
