@@ -1,5 +1,5 @@
 locals {
-  function_name = join("-", ["Eventhub", substr(var.EventhubInstanceName, 0, 27), random_string.this.result])
+  function_name = join("-", ["StorageQueue", substr(var.StorageQueueName, 0, 27), random_string.this.result])
   coralogix_regions = {
     Europe    = "ingress.coralogix.com"
     Europe2   = "ingress.eu2.coralogix.com"
@@ -16,30 +16,14 @@ resource "random_string" "this" {
   upper   = false
 }
 
-# ------------------------------------------------ Eventhub ------------------------------------------------
-data "azurerm_eventhub_namespace" "eventhub-namespace" {
-  name                = var.EventhubNamespace
-  resource_group_name = var.EventhubResourceGroupName
+# ------------------------------------------------ StorageQueue ------------------------------------------------
+data "azurerm_resource_group" "storagequeue-resourcegroup" {
+  name = var.StorageQueueResourceGroupName
 }
 
-data "azurerm_resource_group" "eventhub-resourcegroup" {
-  name = var.EventhubResourceGroupName
-}
-
-data "azurerm_eventhub" "EventhubInstance" {
-  name                = var.EventhubInstanceName
-  namespace_name      = var.EventhubNamespace
-  resource_group_name = var.EventhubResourceGroupName
-}
-
-resource "azurerm_eventhub_authorization_rule" "instance_sas" {
-  name                = "${local.function_name}-SAS"
-  namespace_name      = var.EventhubNamespace
-  eventhub_name       = var.EventhubInstanceName
-  resource_group_name = var.EventhubResourceGroupName
-  listen              = true
-  send                = false
-  manage              = false
+data "azurerm_storage_account" "storagequeue-storageaccount" {
+  name                = var.StorageQueueStorageAccount
+  resource_group_name = var.StorageQueueResourceGroupName
 }
 
 # ------------------------------------------------ Function App ------------------------------------------------
@@ -67,7 +51,7 @@ resource "azurerm_application_insights" "crx-appinsights" {
   application_type    = "web"
 }
 
-resource "azurerm_linux_function_app" "eventhub-function" {
+resource "azurerm_linux_function_app" "storagequeue-function" {
   name                        = local.function_name
   resource_group_name         = var.FunctionResourceGroupName
   location                    = data.azurerm_resource_group.functionRG.location
@@ -84,17 +68,17 @@ resource "azurerm_linux_function_app" "eventhub-function" {
   }
   app_settings = {
     # Environment variable
-    CORALOGIX_APP_NAME       = var.CoralogixApplication
-    CORALOGIX_PRIVATE_KEY    = var.CoralogixPrivateKey
-    CORALOGIX_SUB_SYSTEM     = var.CoralogixSubsystem
-    CORALOGIX_URL            = "https://${local.coralogix_regions[var.CoralogixRegion]}/api/v1/logs"
-    EVENTHUB_CONNECT_STRING  = azurerm_eventhub_authorization_rule.instance_sas.primary_connection_string
-    EVENTHUB_INSTANCE_NAME   = var.EventhubInstanceName
-    WEBSITE_RUN_FROM_PACKAGE = "https://coralogix-public.s3.eu-west-1.amazonaws.com/azure-functions-repo/EventHub.zip"
+    CORALOGIX_APP_NAME           = var.CoralogixApplication
+    CORALOGIX_PRIVATE_KEY        = var.CoralogixPrivateKey
+    CORALOGIX_SUB_SYSTEM         = var.CoralogixSubsystem
+    CORALOGIX_URL                = "https://${local.coralogix_regions[var.CoralogixRegion]}/api/v1/logs"
+    STORAGE_QUEUE_CONNECT_STRING = data.azurerm_storage_account.storagequeue-storageaccount.primary_connection_string
+    STORAGE_QUEUE_NAME           = var.StorageQueueName
+    WEBSITE_RUN_FROM_PACKAGE     = "https://coralogix-public.s3.eu-west-1.amazonaws.com/azure-functions-repo/StorageQueue.zip"
   }
 }
 
 # ------------------------------------------------ Output ------------------------------------------------
 output "RegionCheck" {
-  value = data.azurerm_resource_group.functionRG.location == data.azurerm_resource_group.eventhub-resourcegroup.location ? "[Info] Azure Function WAS deployed in the same region as the EventHub" : "[Notice] Azure Function WAS NOT deployed in the same region as the EventHub"
+  value = data.azurerm_resource_group.functionRG.location == data.azurerm_resource_group.storagequeue-resourcegroup.location ? "[Info] Azure Function WAS deployed in the same region as the StorageQueue" : "[Notice] Azure Function WAS NOT deployed in the same region as the StorageQueue"
 }
