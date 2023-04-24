@@ -84,7 +84,7 @@ module "diagnosticmetrics" {
   CoralogixRegion = "Europe"
   CoralogixPrivateKey = < Private Key >
   CoralogixApplication = "Azure"
-  CoralogixSubsystem = "EventHub"
+  CoralogixSubsystem = "DiagnosticMetrics"
   FunctionResourceGroupName = < Function ResourceGroup Name >
   FunctionStorageAccountName = < Function StorageAccount Name >
   EventhubInstanceName = < Name of EventHub Instance >
