@@ -7,6 +7,7 @@ locals {
     Singapore = "ingress.coralogixsg.com"
     US        = "ingress.coralogix.us"
   }
+    sku = var.FunctionAppServicePlanType == "Consumption" ? "Y1" : "EP1"
 }
 
 resource "random_string" "this" {
@@ -36,12 +37,12 @@ data "azurerm_storage_account" "functionSA" {
   resource_group_name = var.FunctionResourceGroupName
 }
 
-resource "azurerm_service_plan" "consumption-plan" {
+resource "azurerm_service_plan" "service-plan" {
   name                = "${local.function_name}-plan"
   resource_group_name = var.FunctionResourceGroupName
   location            = data.azurerm_resource_group.functionRG.location
   os_type             = "Linux"
-  sku_name            = "Y1"
+  sku_name            = local.sku
 }
 
 resource "azurerm_application_insights" "crx-appinsights" {
@@ -57,7 +58,7 @@ resource "azurerm_linux_function_app" "storagequeue-function" {
   location                    = data.azurerm_resource_group.functionRG.location
   storage_account_name        = var.FunctionStorageAccountName
   storage_account_access_key  = data.azurerm_storage_account.functionSA.primary_access_key
-  service_plan_id             = azurerm_service_plan.consumption-plan.id
+  service_plan_id             = azurerm_service_plan.service-plan.id
   functions_extension_version = "~4"
   site_config {
     application_insights_key               = azurerm_application_insights.crx-appinsights.instrumentation_key
