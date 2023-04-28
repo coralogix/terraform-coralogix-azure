@@ -33,6 +33,7 @@ module "bloblstorage" {
   CoralogixSubsystem = "EventHub"
   FunctionResourceGroupName = < Function ResourceGroup Name >
   FunctionStorageAccountName = < Function StorageAccount Name >
+  FunctionAppServicePlanType = "Consumption"
   BlobContainerName = < Blob Container Name>
   BlobContainerStorageAccount = < Blob Container Storage Account Name >
   BlobContainerResourceGroupName = < Blob Container Resource Group Name>
@@ -64,6 +65,7 @@ module "bloblstorage" {
 | <a name="input_CoralogixSubsystem"></a> [CoralogixSubsystem](#input\_CoralogixSubsystem) | The subsystem name of your application | `string` | n/a | yes |
 | <a name="input_FunctionResourceGroupName"></a> [FunctionResourceGroupName](#input\_FunctionResourceGroupName) | The name of the resource group into which to deploy the Function App | `string` | n/a | yes |
 | <a name="input_FunctionStorageAccountName"></a> [FunctionStorageAccountName](#input\_FunctionStorageAccountName) | The name of the storage account that the Function App will use | `string` | n/a | yes |
+| <a name="input_FunctionAppServicePlanType"></a> [FunctionAppServicePlanType](#input\_FunctionAppServicePlanType) | The type of the App Service Plan to use for the Function App. Choose Premium if you need vNet support. | `string` | `Consumption` | yes |
 | <a name="input_BlobContainerName"></a> [BlobContainerName](#input\_BlobContainerName) | The name of the Blob Container | `string` | n/a | yes
 | <a name="input_BlobContainerStorageAccount"></a> [BlobContainerStorageAccount](#input\_BlobContainerStorageAccount) | The name of the Storage Account containing the Blob Container | `string` | n/a | yes
 | <a name="input_BlobContainerResourceGroupName"></a> [BlobContainerResourceGroupName](#input\_BlobContainerResourceGroupName) | The name of the resource group that contains the Storage Account | `string` | n/a | yes

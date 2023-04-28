@@ -33,6 +33,7 @@ module "storagequeue" {
   CoralogixSubsystem = "EventHub"
   FunctionResourceGroupName = < Function ResourceGroup Name >
   FunctionStorageAccountName = < Function StorageAccount Name >
+  FunctionAppServicePlanType = "Consumption"
   StorageQueueName = < Name of the StorageQueue >
   StorageQueueStorageAccount = < Name of the StorageQueue Storage Account >
   StorageQueueResourceGroupName = < Name of the StorageQueue Resource Group >
@@ -62,6 +63,7 @@ module "storagequeue" {
 | <a name="input_CoralogixSubsystem"></a> [CoralogixSubsystem](#input\_CoralogixSubsystem) | The subsystem name of your application | `string` | n/a | yes |
 | <a name="input_FunctionResourceGroupName"></a> [FunctionResourceGroupName](#input\_FunctionResourceGroupName) | The name of the resource group into which to deploy the Function App | `string` | n/a | yes |
 | <a name="input_FunctionStorageAccountName"></a> [FunctionStorageAccountName](#input\_FunctionStorageAccountName) | The name of the storage account that the Function App will use | `string` | n/a | yes |
+| <a name="input_FunctionAppServicePlanType"></a> [FunctionAppServicePlanType](#input\_FunctionAppServicePlanType) | The type of the App Service Plan to use for the Function App. Choose Premium if you need vNet support. | `string` | `Consumption` | yes |
 | <a name="input_StorageQueueName"></a> [StorageQueueName](#input\_StorageQueueName) | The name of the StorageQueue | `string` | n/a | yes |
 | <a name="input_StorageQueueStorageAccount"></a> [StorageQueueStorageAccount](#input\_StorageQueueStorageAccount) | The name of the Storage Account containing the StorageQueue | `string` | n/a | yes |
 | <a name="input_StorageQueueResourceGroupName"></a> [StorageQueueResourceGroupName](#input\_StorageQueueResourceGroupName) | The name of the resource group that contains the Storage Account | `string` | n/a | yes |
