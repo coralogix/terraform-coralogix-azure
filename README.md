@@ -75,18 +75,19 @@ module "storagequeue" {
 }
 ```
 
-`diagnosticmetrics`:
+`DiagnosticData`:
 
 ```hcl
-module "diagnosticmetrics" {
-  source = "coralogix/azure/coralogix//modules/diagnosticmetrics"
+module "DiagnosticData" {
+  source = "coralogix/azure/coralogix//modules/DiagnosticData"
 
   CoralogixRegion = "Europe"
   CoralogixPrivateKey = < Private Key >
   CoralogixApplication = "Azure"
-  CoralogixSubsystem = "DiagnosticMetrics"
+  CoralogixSubsystem = "DiagnosticData"
   FunctionResourceGroupName = < Function ResourceGroup Name >
   FunctionStorageAccountName = < Function StorageAccount Name >
+  FunctionAppServicePlanType = "Consumption"
   EventhubInstanceName = < Name of EventHub Instance >
   EventhubNamespace = < Name of Eventhub Namespace >
   EventhubResourceGroupName = < Name of Eventhub ResourceGroup >

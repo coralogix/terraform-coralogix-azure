@@ -1,5 +1,5 @@
 locals {
-  function_name = join("-", ["DiagnosticMetrics", random_string.this.result])
+  function_name = join("-", ["DiagnosticData", random_string.this.result])
   coralogix_regions = {
     Europe    = "ingress.coralogix.com"
     Europe2   = "ingress.eu2.coralogix.com"
@@ -90,7 +90,7 @@ resource "azurerm_linux_function_app" "eventhub-function" {
     CORALOGIX_URL            = "https://${local.coralogix_regions[var.CoralogixRegion]}/azure/events/v1"
     EVENTHUB_CONNECT_STRING  = azurerm_eventhub_authorization_rule.instance_sas.primary_connection_string
     EVENTHUB_INSTANCE_NAME   = var.EventhubInstanceName
-    WEBSITE_RUN_FROM_PACKAGE = "https://coralogix-public.s3.eu-west-1.amazonaws.com/azure-functions-repo/DiagnosticMetrics.zip"
+    WEBSITE_RUN_FROM_PACKAGE = "https://coralogix-public.s3.eu-west-1.amazonaws.com/azure-functions-repo/DiagnosticData.zip"
   }
 }
 
