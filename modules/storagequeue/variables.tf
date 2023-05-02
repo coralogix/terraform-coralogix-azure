@@ -33,6 +33,16 @@ variable "FunctionStorageAccountName" {
   type        = string
 }
 
+variable "FunctionAppServicePlanType" {
+  description = "The type of the App Service Plan to use for the Function App"
+  type        = string
+  default     = "Consumption"
+  validation {
+    condition     = contains(["Consumption", "Premium"], var.FunctionAppServicePlanType)
+    error_message = "The function app service plan type must be on of these values: [Consumption, Premium]."
+  }
+}
+
 variable "StorageQueueName" {
   description = "The name of the StorageQueue."
   type        = string
