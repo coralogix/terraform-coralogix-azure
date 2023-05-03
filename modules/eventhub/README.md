@@ -33,6 +33,7 @@ module "eventhub" {
   CoralogixSubsystem = "EventHub"
   FunctionResourceGroupName = < Function ResourceGroup Name >
   FunctionStorageAccountName = < Function StorageAccount Name >
+  FunctionAppServicePlanType = "Consumption"
   EventhubInstanceName = < Name of EventHub Instance >
   EventhubNamespace = < Name of Eventhub Namespace >
   EventhubResourceGroupName = < Name of Eventhub ResourceGroup >
@@ -62,6 +63,7 @@ module "eventhub" {
 | <a name="input_CoralogixSubsystem"></a> [CoralogixSubsystem](#input\_CoralogixSubsystem) | The subsystem name of your application | `string` | n/a | yes |
 | <a name="input_FunctionResourceGroupName"></a> [FunctionResourceGroupName](#input\_FunctionResourceGroupName) | The name of the resource group into which to deploy the Function App | `string` | n/a | yes |
 | <a name="input_FunctionStorageAccountName"></a> [FunctionStorageAccountName](#input\_FunctionStorageAccountName) | The name of the storage account that the Function App will use | `string` | n/a | yes |
+| <a name="input_FunctionAppServicePlanType"></a> [FunctionAppServicePlanType](#input\_FunctionAppServicePlanType) | The type of the App Service Plan to use for the Function App. Choose Premium if you need vNet support. | `string` | `Consumption` | yes |
 | <a name="input_EventhubInstanceName"></a> [EventhubInstanceName](#input\_EventhubInstanceName) | The name of the EventHub Instance | `string` | n/a | yes |
 | <a name="input_EventhubNamespace"></a> [EventhubNamespace](#input\_EventhubNamespace) | The name of the EventHub Namespace | `string` | n/a | yes |
 | <a name="input_EventhubResourceGroupName"></a> [EventhubResourceGroupName](#input\_EventhubResourceGroupName) | The name of the resource group that the eventhub belong to. | `string` | n/a | yes |

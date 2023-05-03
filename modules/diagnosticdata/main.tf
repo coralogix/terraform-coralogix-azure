@@ -1,5 +1,5 @@
 locals {
-  function_name = join("-", ["Eventhub", substr(var.EventhubInstanceName, 0, 27), random_string.this.result])
+  function_name = join("-", ["DiagnosticData", random_string.this.result])
   coralogix_regions = {
     Europe    = "ingress.coralogix.com"
     Europe2   = "ingress.eu2.coralogix.com"
@@ -7,7 +7,6 @@ locals {
     Singapore = "ingress.coralogixsg.com"
     US        = "ingress.coralogix.us"
   }
-  sku = var.FunctionAppServicePlanType == "Consumption" ? "Y1" : "EP1"
 }
 
 resource "random_string" "this" {
@@ -53,12 +52,12 @@ data "azurerm_storage_account" "functionSA" {
   resource_group_name = var.FunctionResourceGroupName
 }
 
-resource "azurerm_service_plan" "service-plan" {
+resource "azurerm_service_plan" "consumption-plan" {
   name                = "${local.function_name}-plan"
   resource_group_name = var.FunctionResourceGroupName
   location            = data.azurerm_resource_group.functionRG.location
   os_type             = "Linux"
-  sku_name            = local.sku
+  sku_name            = "Y1"
 }
 
 resource "azurerm_application_insights" "crx-appinsights" {
@@ -74,13 +73,13 @@ resource "azurerm_linux_function_app" "eventhub-function" {
   location                    = data.azurerm_resource_group.functionRG.location
   storage_account_name        = var.FunctionStorageAccountName
   storage_account_access_key  = data.azurerm_storage_account.functionSA.primary_access_key
-  service_plan_id             = azurerm_service_plan.service-plan.id
+  service_plan_id             = azurerm_service_plan.consumption-plan.id
   functions_extension_version = "~4"
   site_config {
     application_insights_key               = azurerm_application_insights.crx-appinsights.instrumentation_key
     application_insights_connection_string = azurerm_application_insights.crx-appinsights.connection_string
     application_stack {
-      node_version = 16
+      node_version = 18
     }
   }
   app_settings = {
@@ -88,10 +87,10 @@ resource "azurerm_linux_function_app" "eventhub-function" {
     CORALOGIX_APP_NAME       = var.CoralogixApplication
     CORALOGIX_PRIVATE_KEY    = var.CoralogixPrivateKey
     CORALOGIX_SUB_SYSTEM     = var.CoralogixSubsystem
-    CORALOGIX_URL            = "https://${local.coralogix_regions[var.CoralogixRegion]}/api/v1/logs"
+    CORALOGIX_URL            = "https://${local.coralogix_regions[var.CoralogixRegion]}/azure/events/v1"
     EVENTHUB_CONNECT_STRING  = azurerm_eventhub_authorization_rule.instance_sas.primary_connection_string
     EVENTHUB_INSTANCE_NAME   = var.EventhubInstanceName
-    WEBSITE_RUN_FROM_PACKAGE = "https://coralogix-public.s3.eu-west-1.amazonaws.com/azure-functions-repo/EventHub.zip"
+    WEBSITE_RUN_FROM_PACKAGE = "https://coralogix-public.s3.eu-west-1.amazonaws.com/azure-functions-repo/DiagnosticData.zip"
   }
 }
 

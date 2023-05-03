@@ -31,6 +31,7 @@ module "eventhub" {
   CoralogixSubsystem = "EventHub"
   FunctionResourceGroupName = < Function ResourceGroup Name >
   FunctionStorageAccountName = < Function StorageAccount Name >
+  FunctionAppServicePlanType = "Consumption"
   EventhubInstanceName = < Name of EventHub Instance >
   EventhubNamespace = < Name of Eventhub Namespace >
   EventhubResourceGroupName = < Name of Eventhub ResourceGroup >
@@ -49,6 +50,7 @@ module "bloblstorage" {
   CoralogixSubsystem = "EventHub"
   FunctionResourceGroupName = < Function ResourceGroup Name >
   FunctionStorageAccountName = < Function StorageAccount Name >
+  FunctionAppServicePlanType = "Consumption"
   BlobContainerName = < Blob Container Name>
   BlobContainerStorageAccount = < Blob Container Storage Account Name >
   BlobContainerResourceGroupName = < Blob Container Resource Group Name>
@@ -69,9 +71,29 @@ module "storagequeue" {
   CoralogixSubsystem = "EventHub"
   FunctionResourceGroupName = < Function ResourceGroup Name >
   FunctionStorageAccountName = < Function StorageAccount Name >
+  FunctionAppServicePlanType = "Consumption"
   StorageQueueName = < Name of the StorageQueue >
   StorageQueueStorageAccount = < Name of the StorageQueue Storage Account >
   StorageQueueResourceGroupName = < Name of the StorageQueue Resource Group >
+}
+```
+
+`DiagnosticData`:
+
+```hcl
+module "DiagnosticData" {
+  source = "coralogix/azure/coralogix//modules/DiagnosticData"
+
+  CoralogixRegion = "Europe"
+  CoralogixPrivateKey = < Private Key >
+  CoralogixApplication = "Azure"
+  CoralogixSubsystem = "DiagnosticData"
+  FunctionResourceGroupName = < Function ResourceGroup Name >
+  FunctionStorageAccountName = < Function StorageAccount Name >
+  FunctionAppServicePlanType = "Consumption"
+  EventhubInstanceName = < Name of EventHub Instance >
+  EventhubNamespace = < Name of Eventhub Namespace >
+  EventhubResourceGroupName = < Name of Eventhub ResourceGroup >
 }
 ```
 
