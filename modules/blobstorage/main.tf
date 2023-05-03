@@ -18,6 +18,7 @@ resource "random_string" "this" {
 }
 
 # ------------------------------------------------ BlobStorage ------------------------------------------------
+
 data "azurerm_resource_group" "blobstorage-resourcegroup" {
   name = var.BlobContainerResourceGroupName
 }
@@ -28,6 +29,7 @@ data "azurerm_storage_account" "blobstorage-storageaccount" {
 }
 
 # ------------------------------------------------ EventGrid ------------------------------------------------
+
 data "azurerm_eventgrid_system_topic" "eventgrid-systemtopic" {
   name                = var.EventGridSystemTopicName
   resource_group_name = var.BlobContainerResourceGroupName
@@ -51,6 +53,7 @@ resource "azurerm_eventgrid_system_topic_event_subscription" "eventgrid-subscrip
 }
 
 # ------------------------------------------------ Function App ------------------------------------------------
+
 data "azurerm_resource_group" "functionRG" {
   name = var.FunctionResourceGroupName
 }
