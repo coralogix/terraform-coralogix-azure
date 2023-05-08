@@ -26,6 +26,7 @@ module "eventhub" {
   source = "coralogix/azure/coralogix//modules/eventhub"
 
   CoralogixRegion = "Europe"
+  CustomDomain = < Custom FQDN if applicable >
   CoralogixPrivateKey = < Private Key >
   CoralogixApplication = "Azure"
   CoralogixSubsystem = "EventHub"
@@ -45,6 +46,7 @@ module "bloblstorage" {
   source = "coralogix/azure/coralogix//modules/blobstorage"
 
   CoralogixRegion = "Europe"
+  CustomDomain = < Custom FQDN if applicable >
   CoralogixPrivateKey = < Private Key >
   CoralogixApplication = "Azure"
   CoralogixSubsystem = "EventHub"
@@ -66,6 +68,7 @@ module "storagequeue" {
   source = "coralogix/azure/coralogix//modules/storagequeue"
 
   CoralogixRegion = "Europe"
+  CustomDomain = < Custom FQDN if applicable >
   CoralogixPrivateKey = < Private Key >
   CoralogixApplication = "Azure"
   CoralogixSubsystem = "EventHub"
@@ -85,6 +88,7 @@ module "DiagnosticData" {
   source = "coralogix/azure/coralogix//modules/DiagnosticData"
 
   CoralogixRegion = "Europe"
+  CustomDomain = < Custom FQDN if applicable >
   CoralogixPrivateKey = < Private Key >
   CoralogixApplication = "Azure"
   CoralogixSubsystem = "DiagnosticData"
