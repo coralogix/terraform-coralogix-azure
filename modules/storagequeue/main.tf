@@ -6,6 +6,7 @@ locals {
     India     = "ingress.coralogix.in"
     Singapore = "ingress.coralogixsg.com"
     US        = "ingress.coralogix.us"
+    Custom    = var.CustomDomain
   }
     sku = var.FunctionAppServicePlanType == "Consumption" ? "Y1" : "EP1"
 }
@@ -64,7 +65,7 @@ resource "azurerm_linux_function_app" "storagequeue-function" {
     application_insights_key               = azurerm_application_insights.crx-appinsights.instrumentation_key
     application_insights_connection_string = azurerm_application_insights.crx-appinsights.connection_string
     application_stack {
-      node_version = 16
+      node_version = 18
     }
   }
   app_settings = {

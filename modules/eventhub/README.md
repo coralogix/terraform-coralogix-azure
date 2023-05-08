@@ -28,6 +28,7 @@ module "eventhub" {
   source = "coralogix/azure/coralogix//modules/eventhub"
 
   CoralogixRegion = "Europe"
+  CustomDomain = < Custom FQDN if applicable >
   CoralogixPrivateKey = < Private Key >
   CoralogixApplication = "Azure"
   CoralogixSubsystem = "EventHub"
@@ -58,6 +59,7 @@ module "eventhub" {
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
 | <a name="input_CoralogixRegion"></a> [CoralogixRegion](#input\_CoralogixRegion) | The Coralogix location region, possible options are [`Europe`, `Europe2`, `India`, `Singapore`, `US`] | `string` | `Europe` | no |
+| <a name="input_CustomDomain"></a> [CustomDomain](#input\_CustomDomain) | Your Custom URL for the Coralogix account. Ignore unless you have a custom URL. Just the FQDN, not the whole URL. | `string` | n/a | no |
 | <a name="input_CoralogixPrivateKey"></a> [CoralogixPrivateKey](#input\_CoralogixPrivateKey) | The Coralogix private key which is used to validate your authenticity | `string` | n/a | yes |
 | <a name="input_CoralogixApplication"></a> [CoralogixApplication](#input\_CoralogixApplication) | The name of your application | `string` | n/a | yes |
 | <a name="input_CoralogixSubsystem"></a> [CoralogixSubsystem](#input\_CoralogixSubsystem) | The subsystem name of your application | `string` | n/a | yes |
