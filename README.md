@@ -25,17 +25,17 @@ provider "azurerm" {
 module "eventhub" {
   source = "coralogix/azure/coralogix//modules/eventhub"
 
-  CoralogixRegion = "Europe"
-  CustomDomain = < Custom FQDN if applicable >
-  CoralogixPrivateKey = < Private Key >
-  CoralogixApplication = "Azure"
-  CoralogixSubsystem = "EventHub"
-  FunctionResourceGroupName = < Function ResourceGroup Name >
+  CoralogixRegion            = "Europe"
+  CustomDomain               = < Custom FQDN if applicable >
+  CoralogixPrivateKey        = < Private Key >
+  CoralogixApplication       = "Azure"
+  CoralogixSubsystem         = "EventHub"
+  FunctionResourceGroupName  = < Function ResourceGroup Name >
   FunctionStorageAccountName = < Function StorageAccount Name >
   FunctionAppServicePlanType = "Consumption"
-  EventhubInstanceName = < Name of EventHub Instance >
-  EventhubNamespace = < Name of Eventhub Namespace >
-  EventhubResourceGroupName = < Name of Eventhub ResourceGroup >
+  EventhubInstanceName       = < Name of EventHub Instance >
+  EventhubNamespace          = < Name of Eventhub Namespace >
+  EventhubResourceGroupName  = < Name of Eventhub ResourceGroup >
 }
 ```
 
@@ -45,19 +45,19 @@ module "eventhub" {
 module "bloblstorage" {
   source = "coralogix/azure/coralogix//modules/blobstorage"
 
-  CoralogixRegion = "Europe"
-  CustomDomain = < Custom FQDN if applicable >
-  CoralogixPrivateKey = < Private Key >
-  CoralogixApplication = "Azure"
-  CoralogixSubsystem = "EventHub"
-  FunctionResourceGroupName = < Function ResourceGroup Name >
-  FunctionStorageAccountName = < Function StorageAccount Name >
-  FunctionAppServicePlanType = "Consumption"
-  BlobContainerName = < Blob Container Name>
-  BlobContainerStorageAccount = < Blob Container Storage Account Name >
+  CoralogixRegion                = "Europe"
+  CustomDomain                   = < Custom FQDN if applicable >
+  CoralogixPrivateKey            = < Private Key >
+  CoralogixApplication           = "Azure"
+  CoralogixSubsystem             = "EventHub"
+  FunctionResourceGroupName      = < Function ResourceGroup Name >
+  FunctionStorageAccountName     = < Function StorageAccount Name >
+  FunctionAppServicePlanType     = "Consumption"
+  BlobContainerName              = < Blob Container Name>
+  BlobContainerStorageAccount    = < Blob Container Storage Account Name >
   BlobContainerResourceGroupName = < Blob Container Resource Group Name>
-  EventGridSystemTopicName = < EventGrid System Topic Name >
-  NewlinePattern = < Newline Pattern >
+  EventGridSystemTopicName       = < EventGrid System Topic Name >
+  NewlinePattern                 = < Newline Pattern >
 }
 ```
 
@@ -67,16 +67,16 @@ module "bloblstorage" {
 module "storagequeue" {
   source = "coralogix/azure/coralogix//modules/storagequeue"
 
-  CoralogixRegion = "Europe"
-  CustomDomain = < Custom FQDN if applicable >
-  CoralogixPrivateKey = < Private Key >
-  CoralogixApplication = "Azure"
-  CoralogixSubsystem = "EventHub"
-  FunctionResourceGroupName = < Function ResourceGroup Name >
-  FunctionStorageAccountName = < Function StorageAccount Name >
-  FunctionAppServicePlanType = "Consumption"
-  StorageQueueName = < Name of the StorageQueue >
-  StorageQueueStorageAccount = < Name of the StorageQueue Storage Account >
+  CoralogixRegion               = "Europe"
+  CustomDomain                  = < Custom FQDN if applicable >
+  CoralogixPrivateKey           = < Private Key >
+  CoralogixApplication          = "Azure"
+  CoralogixSubsystem            = "EventHub"
+  FunctionResourceGroupName     = < Function ResourceGroup Name >
+  FunctionStorageAccountName    = < Function StorageAccount Name >
+  FunctionAppServicePlanType    = "Consumption"
+  StorageQueueName              = < Name of the StorageQueue >
+  StorageQueueStorageAccount    = < Name of the StorageQueue Storage Account >
   StorageQueueResourceGroupName = < Name of the StorageQueue Resource Group >
 }
 ```
@@ -87,17 +87,17 @@ module "storagequeue" {
 module "DiagnosticData" {
   source = "coralogix/azure/coralogix//modules/DiagnosticData"
 
-  CoralogixRegion = "Europe"
-  CustomDomain = < Custom FQDN if applicable >
-  CoralogixPrivateKey = < Private Key >
-  CoralogixApplication = "Azure"
-  CoralogixSubsystem = "DiagnosticData"
-  FunctionResourceGroupName = < Function ResourceGroup Name >
+  CoralogixRegion            = "Europe"
+  CustomDomain               = < Custom FQDN if applicable >
+  CoralogixPrivateKey        = < Private Key >
+  CoralogixApplication       = "Azure"
+  CoralogixSubsystem         = "DiagnosticData"
+  FunctionResourceGroupName  = < Function ResourceGroup Name >
   FunctionStorageAccountName = < Function StorageAccount Name >
   FunctionAppServicePlanType = "Consumption"
-  EventhubInstanceName = < Name of EventHub Instance >
-  EventhubNamespace = < Name of Eventhub Namespace >
-  EventhubResourceGroupName = < Name of Eventhub ResourceGroup >
+  EventhubInstanceName       = < Name of EventHub Instance >
+  EventhubNamespace          = < Name of Eventhub Namespace >
+  EventhubResourceGroupName  = < Name of Eventhub ResourceGroup >
 }
 ```
 
