@@ -58,7 +58,7 @@ module "eventhub" {
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_CoralogixRegion"></a> [CoralogixRegion](#input\_CoralogixRegion) | The Coralogix location region, possible options are [`Europe`, `Europe2`, `India`, `Singapore`, `US`] | `string` | `Europe` | no |
+| <a name="input_CoralogixRegion"></a> [CoralogixRegion](#input\_CoralogixRegion) | The Coralogix location region, possible options are [`Europe`, `Europe2`, `India`, `Singapore`, `US`, `US2`] | `string` | `Europe` | no |
 | <a name="input_CustomDomain"></a> [CustomDomain](#input\_CustomDomain) | Your Custom URL for the Coralogix account. Ignore unless you have a custom URL. Just the FQDN, not the whole URL. | `string` | n/a | no |
 | <a name="input_CoralogixPrivateKey"></a> [CoralogixPrivateKey](#input\_CoralogixPrivateKey) | The Coralogix private key which is used to validate your authenticity | `string` | n/a | yes |
 | <a name="input_CoralogixApplication"></a> [CoralogixApplication](#input\_CoralogixApplication) | The name of your application | `string` | n/a | yes |
@@ -69,3 +69,13 @@ module "eventhub" {
 | <a name="input_EventhubInstanceName"></a> [EventhubInstanceName](#input\_EventhubInstanceName) | The name of the EventHub Instance | `string` | n/a | yes |
 | <a name="input_EventhubNamespace"></a> [EventhubNamespace](#input\_EventhubNamespace) | The name of the EventHub Namespace | `string` | n/a | yes |
 | <a name="input_EventhubResourceGroupName"></a> [EventhubResourceGroupName](#input\_EventhubResourceGroupName) | The name of the resource group that the eventhub belong to. | `string` | n/a | yes |
+
+## Coralgoix regions
+| Coralogix region | AWS Region | Coralogix Domain |
+|------|------------|------------|
+| `Europe` |  `eu-west-1` | coralogix.com |
+| `Europe2` |  `eu-north-1` | eu2.coralogix.com |
+| `India` | `ap-south-1`  | coralogix.in |
+| `Singapore` | `ap-southeast-1` | coralogixsg.com |
+| `US` | `us-east-2` | coralogix.us |
+| `US2` | `us-west-2` | cx498.coralogix.com |
