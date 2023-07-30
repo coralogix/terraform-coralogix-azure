@@ -6,6 +6,7 @@ locals {
     India     = "ingress.coralogix.in"
     Singapore = "ingress.coralogixsg.com"
     US        = "ingress.coralogix.us"
+    US2       = "ingress.cx498.coralogix.com"
     Custom    = var.CustomDomain
   }
   sku = var.FunctionAppServicePlanType == "Consumption" ? "Y1" : "EP1"
