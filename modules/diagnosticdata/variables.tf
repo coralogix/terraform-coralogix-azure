@@ -39,6 +39,16 @@ variable "FunctionStorageAccountName" {
   type        = string
 }
 
+variable "FunctionAppServicePlanType" {
+  description = "The type of the App Service Plan to use for the Function App"
+  type        = string
+  default     = "Consumption"
+  validation {
+    condition     = contains(["Consumption", "Premium"], var.FunctionAppServicePlanType)
+    error_message = "The function app service plan type must be on of these values: [Consumption, Premium]."
+  }
+}
+
 variable "EventhubResourceGroupName" {
   description = "The name of the resource group that the eventhub belong to"
   type        = string
