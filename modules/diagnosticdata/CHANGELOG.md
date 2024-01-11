@@ -1,6 +1,6 @@
 # Changelog
 
 ## diagnosticdata
-<!-- To add a new entry write: -->
-<!-- ### version / full date -->
-<!-- * [Update/Bug fix] message that describes the changes that you apply -->
+
+1.0.9 - 11 Jan 2024
+[Update] Add missing FunctionAppServicePlanType to variables.tf
