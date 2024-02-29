@@ -47,10 +47,19 @@ resource "azurerm_service_plan" "service-plan" {
   sku_name            = local.sku
 }
 
+resource "azurerm_log_analytics_workspace" "crx-workspace" {
+  name                = "${local.function_name}-workspace"
+  location            = data.azurerm_resource_group.functionRG.location
+  resource_group_name = var.FunctionResourceGroupName
+  sku                 = "PerGB2018"
+  retention_in_days   = 90
+}
+
 resource "azurerm_application_insights" "crx-appinsights" {
   name                = "${local.function_name}-appinsights"
   resource_group_name = var.FunctionResourceGroupName
   location            = data.azurerm_resource_group.functionRG.location
+  workspace_id        = azurerm_log_analytics_workspace.crx-workspace.id
   application_type    = "web"
 }
 
@@ -84,4 +93,8 @@ resource "azurerm_linux_function_app" "storagequeue-function" {
 # ------------------------------------------------ Output ------------------------------------------------
 output "RegionCheck" {
   value = data.azurerm_resource_group.functionRG.location == data.azurerm_resource_group.storagequeue-resourcegroup.location ? "[Info] Azure Function WAS deployed in the same region as the StorageQueue" : "[Notice] Azure Function WAS NOT deployed in the same region as the StorageQueue"
+}
+
+output "SyncTriggerCommand" {
+  value = "Run this command to sync your StorageQueue Triggers:\n\taz resource invoke-action -g ${var.FunctionResourceGroupName} -n ${local.function_name} --action syncfunctiontriggers --resource-type Microsoft.Web/sites"
 }
