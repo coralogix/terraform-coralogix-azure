@@ -15,7 +15,7 @@ terraform {
   required_providers {
     azurerm = {
       source = "hashicorp/azurerm"
-      version = "~> 3.50"
+      version = "~> 3.93"
     }
   }
 }
@@ -45,13 +45,13 @@ module "eventhub" {
 
 | Name | Version |
 |------|---------|
-| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 0.13.1 |
+| <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.7.4 |
 
 ## Providers
 
 | Name | Version |
 |------|---------|
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | >= 3.50.0 |
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | >= 3.93 |
 | <a name="provider_random"></a> [random](#provider\_random) | >= 3.4.3 |
 
 ## Inputs
