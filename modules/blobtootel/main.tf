@@ -106,8 +106,6 @@ resource "azurerm_linux_function_app" "blobtootel-function" {
   functions_extension_version = "~4"
   virtual_network_subnet_id   = var.FunctionAppServicePlanType == "Premium" ? data.azurerm_subnet.function_subnet[0].id : null
   site_config {
-    application_insights_key               = azurerm_application_insights.crx-appinsights.instrumentation_key
-    application_insights_connection_string = azurerm_application_insights.crx-appinsights.connection_string
     application_stack {
       node_version = 20
     }
@@ -125,10 +123,21 @@ resource "azurerm_linux_function_app" "blobtootel-function" {
     BLOB_STORAGE_ACCOUNT_CONNECTION_STRING   = data.azurerm_storage_account.blobtootel-storageaccount.primary_connection_string
     EVENT_HUB_NAMESPACE_CONNECTION_STRING    = data.azurerm_eventhub_namespace_authorization_rule.eventhub-namespace-auth.primary_connection_string
     AzureWebJobsStorage                      = azurerm_storage_account.functionSA.primary_connection_string
+    APPLICATIONINSIGHTS_CONNECTION_STRING    = azurerm_application_insights.crx-appinsights.connection_string
     WEBSITE_CONTENTAZUREFILECONNECTIONSTRING = azurerm_storage_account.functionSA.primary_connection_string
     WEBSITE_CONTENTSHARE                     = lower(local.function_name)
     FUNCTIONS_EXTENSION_VERSION              = "~4"
     FUNCTIONS_WORKER_RUNTIME                 = "node"
     WEBSITE_RUN_FROM_PACKAGE                 = "https://coralogix-public.s3.eu-west-1.amazonaws.com/azure-functions-repo/BlobToOtel.zip"
   }
+}
+
+# ------------------------------------------------ Output ------------------------------------------------
+
+output "RegionCheck" {
+  value = data.azurerm_resource_group.functionRG.location == data.azurerm_resource_group.blobtootel-resourcegroup.location ? "[Info] Azure Function WAS deployed in the same region as the Storage Blob" : "[Notice] Azure Function WAS NOT deployed in the same region as the Storage Blob"
+}
+
+output "SyncTriggerCommand" {
+  value = "Run this command to sync your StorageQueue Triggers:\n\taz resource invoke-action -g ${var.FunctionResourceGroupName} -n ${local.function_name} --action syncfunctiontriggers --resource-type Microsoft.Web/sites"
 }
