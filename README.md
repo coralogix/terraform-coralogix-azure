@@ -39,6 +39,23 @@ module "eventhub" {
 }
 ```
 
+`blobtootel`:
+
+```hcl
+module "blobtootel" {
+  source = "coralogix/azure/coralogix//modules/blobtootel"
+
+  OtelEndpoint                   = < OTLP Endpoint >
+  FunctionResourceGroupName      = < Function ResourceGroup Name >
+  FunctionAppServicePlanType     = "Consumption"
+  EventHubNamespace              = < Name of Eventhub Namespace >
+  EventHubName                   = < Name of EventHub Instance >
+  EventHubResourceGroup          = < Name of Eventhub ResourceGroup >
+  BlobContainerStorageAccount    = < Blob Container Storage Account Name >
+  BlobContainerResourceGroupName = < Blob Container Resource Group Name >
+}
+```
+
 `blobstorage`:
 
 ```hcl
