@@ -113,6 +113,7 @@ resource "azurerm_linux_function_app" "blobstorage-function" {
     BLOB_STORAGE_ACCOUNT_CONNECTION_STRING = data.azurerm_storage_account.blobstorage-storageaccount.primary_connection_string
     WEBSITE_RUN_FROM_PACKAGE               = "https://coralogix-public.s3.eu-west-1.amazonaws.com/azure-functions-repo/BlobViaEventGrid.zip"
     NEWLINE_PATTERN                        = var.NewlinePattern
+    DEBUG_ENABLED                          = var.DebugEnabled
   }
 }
 
