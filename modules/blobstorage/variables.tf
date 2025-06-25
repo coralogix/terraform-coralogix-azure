@@ -74,3 +74,9 @@ variable "NewlinePattern" {
   type        = string
   default     = "(?:\\r\\n|\\r|\\n)"
 }
+
+variable "DebugEnabled" {
+  description = "Enable debug logging in the Function App"
+  type        = bool
+  default     = false
+}

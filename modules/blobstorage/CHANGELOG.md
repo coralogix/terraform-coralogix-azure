@@ -7,3 +7,6 @@
 
 ### 1.0.10 / 23 Feb 2024
 [Update/Breaking] Replacing "Classic" Application Insights with Workspace-Based Application Insights.
+
+### 1.0.11 / 25 Jun 2025
+[Update] Add DebugEnabled variable to enable debug logging in the Function App.
