@@ -10,3 +10,6 @@
 
 ### 1.0.11 / 25 Jun 2025
 [Update] Add DebugEnabled variable to enable debug logging in the Function App.
+
+### 1.0.12 / 01 Sep 2025
+[Update] Add EnableBlobMetadata variable to enable logging metadata including the blob name and path.

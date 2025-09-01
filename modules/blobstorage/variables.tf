@@ -80,3 +80,9 @@ variable "DebugEnabled" {
   type        = bool
   default     = false
 }
+
+variable "EnableBlobMetadata" {
+  description = "Whether to enable logging metadata including the blob name and path"
+  type        = bool
+  default     = false
+}

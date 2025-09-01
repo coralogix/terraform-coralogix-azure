@@ -9,7 +9,7 @@ locals {
     US2       = "ingress.cx498.coralogix.com"
     Custom    = var.CustomDomain
   }
-    sku = var.FunctionAppServicePlanType == "Consumption" ? "Y1" : "EP1"
+  sku = var.FunctionAppServicePlanType == "Consumption" ? "Y1" : "EP1"
 }
 
 resource "random_string" "this" {
