@@ -114,6 +114,7 @@ resource "azurerm_linux_function_app" "blobstorage-function" {
     WEBSITE_RUN_FROM_PACKAGE               = "https://coralogix-public.s3.eu-west-1.amazonaws.com/azure-functions-repo/BlobViaEventGrid.zip"
     NEWLINE_PATTERN                        = var.NewlinePattern
     DEBUG_ENABLED                          = var.DebugEnabled
+    ENABLE_BLOB_METADATA                   = var.EnableBlobMetadata
   }
 }
 

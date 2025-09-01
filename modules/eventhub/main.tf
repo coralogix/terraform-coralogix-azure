@@ -1,5 +1,5 @@
 locals {
-  function_name = join("-", ["Eventhub", substr(lower(replace(var.EventhubInstanceName,"_|.","-")),0,27), random_string.this.result])
+  function_name = join("-", ["Eventhub", substr(lower(replace(var.EventhubInstanceName, "_|.", "-")), 0, 27), random_string.this.result])
   coralogix_regions = {
     Europe    = "ingress.coralogix.com"
     Europe2   = "ingress.eu2.coralogix.com"
