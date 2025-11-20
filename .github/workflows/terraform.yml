@@ -6,13 +6,6 @@ on:
       - '**/**/*.tf'
       - '**/*.tfvars'
       - '.github/workflows/terraform.yml'
-  push:
-    branches:
-      - master
-    paths:
-      - '**/*.tf'
-      - '**/*.tfvars'
-      - '.github/workflows/terraform.yml'
 
 jobs:
   changes:
@@ -76,6 +69,7 @@ jobs:
         with:
           header: terraform-modules-${{ matrix.module }}
           message: |
+            ### Module ${{ matrix.module }}
             #### Terraform Format and Style 🖌 `${{ steps.fmt.outcome }}`
             #### Terraform Initialization ⚙️ `${{ steps.init.outcome }}`
             #### Terraform Validation 🤖 `${{ steps.validate.outcome }}`
