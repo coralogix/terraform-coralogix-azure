@@ -4,11 +4,11 @@ on:
     types: [opened, synchronize]
     branches: [master]
     paths: 
-      - "blobtootel/*"
-      - "blobstorage/*"
-      - "eventhub/*"
-      - "storagequeue/*"
-      - "diagnosticdata/*"
+      - "modules/blobtootel/*"
+      - "modules/blobstorage/*"
+      - "modules/eventhub/*"
+      - "modules/storagequeue/*"
+      - "modules/diagnosticdata/*"
 
 permissions:
   contents: read
