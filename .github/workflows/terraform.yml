@@ -69,12 +69,15 @@ jobs:
         with:
           header: terraform-modules-${{ matrix.module }}
           message: |
-            ### Module ${{ matrix.module }}
-            #### Terraform Format and Style 🖌 `${{ steps.fmt.outcome }}`
-            #### Terraform Initialization ⚙️ `${{ steps.init.outcome }}`
-            #### Terraform Validation 🤖 `${{ steps.validate.outcome }}`
+            ## 📦 Terraform Validation: `${{ matrix.module }}`
             
-            <details><summary>Module: modules/${{ matrix.module }}</summary>
+            | Check | Status |
+            |-------|--------|
+            | Format 🖌 | `${{ steps.fmt.outcome }}` |
+            | Init ⚙️ | `${{ steps.init.outcome }}` |
+            | Validate 🤖 | `${{ steps.validate.outcome }}` |
+            
+            <details><summary>📋 Validation Details</summary>
             
             ```
             ${{ steps.validate.outputs.stdout }}
@@ -82,4 +85,5 @@ jobs:
             
             </details>
             
-            *Pusher: @${{ github.actor }}, Action: `${{ github.event_name }}`*
+            ---
+            *Module: `modules/${{ matrix.module }}` • Pusher: @${{ github.actor }}*
