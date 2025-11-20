@@ -47,7 +47,6 @@ module "eventhub" {
   EventhubConsumerGroup     = var.eventhub_consumer_group
 }
 
-# Outputs
 output "sync_trigger_command" {
   description = "Command to sync function triggers"
   value       = module.eventhub.SyncTriggerCommand
