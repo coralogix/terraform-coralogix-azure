@@ -23,7 +23,8 @@ provider "azurerm" {
 
 ```hcl
 module "eventhub" {
-  source = "coralogix/azure/coralogix//modules/eventhub"
+  source  = "coralogix/azure/coralogix//modules/eventhub"
+  version = "1.0.13"
 
   CoralogixRegion            = "Europe"
   CustomDomain               = < Custom FQDN if applicable >
@@ -43,7 +44,8 @@ module "eventhub" {
 
 ```hcl
 module "blobtootel" {
-  source = "coralogix/azure/coralogix//modules/blobtootel"
+  source  = "coralogix/azure/coralogix//modules/blobtootel"
+  version = "1.0.13"
 
   OtelEndpoint                   = < OTLP Endpoint >
   FunctionResourceGroupName      = < Function ResourceGroup Name >
@@ -59,14 +61,15 @@ module "blobtootel" {
 `blobstorage`:
 
 ```hcl
-module "bloblstorage" {
-  source = "coralogix/azure/coralogix//modules/blobstorage"
+module "blobstorage" {
+  source  = "coralogix/azure/coralogix//modules/blobstorage"
+  version = "1.0.13"
 
   CoralogixRegion                = "Europe"
   CustomDomain                   = < Custom FQDN if applicable >
   CoralogixPrivateKey            = < Private Key >
   CoralogixApplication           = "Azure"
-  CoralogixSubsystem             = "EventHub"
+  CoralogixSubsystem             = "BlobStorage"
   FunctionResourceGroupName      = < Function ResourceGroup Name >
   FunctionStorageAccountName     = < Function StorageAccount Name >
   FunctionAppServicePlanType     = "Consumption"
@@ -82,13 +85,14 @@ module "bloblstorage" {
 
 ```hcl
 module "storagequeue" {
-  source = "coralogix/azure/coralogix//modules/storagequeue"
+  source  = "coralogix/azure/coralogix//modules/storagequeue"
+  version = "1.0.13"
 
   CoralogixRegion               = "Europe"
   CustomDomain                  = < Custom FQDN if applicable >
   CoralogixPrivateKey           = < Private Key >
   CoralogixApplication          = "Azure"
-  CoralogixSubsystem            = "EventHub"
+  CoralogixSubsystem            = "StorageQueue"
   FunctionResourceGroupName     = < Function ResourceGroup Name >
   FunctionStorageAccountName    = < Function StorageAccount Name >
   FunctionAppServicePlanType    = "Consumption"
@@ -101,8 +105,9 @@ module "storagequeue" {
 `DiagnosticData`:
 
 ```hcl
-module "DiagnosticData" {
-  source = "coralogix/azure/coralogix//modules/DiagnosticData"
+module "diagnosticdata" {
+  source  = "coralogix/azure/coralogix//modules/diagnosticdata"
+  version = "1.0.13"
 
   CoralogixRegion            = "Europe"
   CustomDomain               = < Custom FQDN if applicable >
