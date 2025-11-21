@@ -8,14 +8,10 @@
     [
       "@semantic-release/commit-analyzer",
       {
-        "preset": "conventionalcommits",
-        "releaseRules": [
-          {"message": "*", "release": "patch"}
-        ]
+        "preset": "conventionalcommits"
       }
     ],
-    [
-      "@semantic-release/github"
-    ]
+    "@semantic-release/release-notes-generator",
+    "@semantic-release/github"
   ]
 }

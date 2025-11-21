@@ -1,0 +1,20 @@
+# Azure Configuration
+azure_subscription_id = "00000000-0000-0000-0000-000000000000"
+
+# Coralogix Configuration
+coralogix_region      = "EU1"
+coralogix_private_key = "your-coralogix-private-key"
+coralogix_application = "Azure-EventHub-example"
+coralogix_subsystem   = "EventHub-CX-example"
+
+# Function App Configuration (using existing resources)
+function_resource_group       = "your-function-resource-group"
+function_storage_account_name = "yourfunctionstorageaccount"
+function_app_service_plan_type = "Consumption"
+function_app_name              = "" # Leave empty for auto-generated name or set custom name
+
+# EventHub Configuration
+eventhub_resource_group = "your-eventhub-resource-group"
+eventhub_namespace      = "your-eventhub-namespace"
+eventhub_instance_name  = "your-eventhub-instance"
+eventhub_consumer_group = "$Default"

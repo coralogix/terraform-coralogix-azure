@@ -1,16 +1,16 @@
 variable "CoralogixRegion" {
-  description = "The Coralogix location region, possible options are [Europe, Europe2, India, Singapore, US, US2]"
+  description = "The Coralogix location region: EU1 (Ireland), EU2 (Stockholm), US1 (Ohio), US2 (Oregon), AP1 (Mumbai), AP2 (Singapore), AP3 (Jakarta)"
   type        = string
   validation {
-    condition     = contains(["Europe", "Europe2", "India", "Singapore", "US", "US2", "Custom"], var.CoralogixRegion)
-    error_message = "The coralogix region must be on of these values: [Europe, Europe2, India, Singapore, US, US2]."
+    condition     = contains(["EU1", "EU2", "US1", "US2", "AP1", "AP2", "AP3", "Custom"], var.CoralogixRegion)
+    error_message = "The coralogix region must be one of these values: [EU1, EU2, US1, US2, AP1, AP2, AP3, Custom]."
   }
 }
 
 variable "CustomDomain" {
-  description = "Your Custom URL for the Coralogix account. Ignore unless you have a custom URL. Just the FQDN, not the whole URL."
+  description = "Your Custom OTLP endpoint for the Coralogix account. Ignore unless you have a custom endpoint. Format: hostname:port (e.g., ingress.customsubdomain.coralogix.com:443)"
   type        = string
-  default     = "ingress.customsubdomain.coralogix.com"
+  default     = "ingress.customsubdomain.coralogix.com:443"
 }
 
 variable "CoralogixPrivateKey" {
@@ -62,4 +62,16 @@ variable "EventhubNamespace" {
 variable "EventhubInstanceName" {
   description = "The name of the EventHub Instance."
   type        = string
+}
+
+variable "EventhubConsumerGroup" {
+  description = "The name of the EventHub Consumer Group."
+  type        = string
+  default     = "$Default"
+}
+
+variable "FunctionAppName" {
+  description = "Optional: Custom name for the Azure Function. If not provided, a name will be auto-generated."
+  type        = string
+  default     = ""
 }
