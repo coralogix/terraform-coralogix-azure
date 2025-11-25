@@ -15,7 +15,7 @@ terraform {
   required_providers {
     azurerm = {
       source = "hashicorp/azurerm"
-      version = "~> 3.93"
+      version = "~> 4.0"
     }
   }
 }
@@ -27,8 +27,8 @@ provider "azurerm" {
 module "eventhub" {
   source = "coralogix/azure/coralogix//modules/eventhub"
 
-  CoralogixRegion = "Europe"
-  CustomDomain = < Custom FQDN if applicable >
+  CoralogixRegion = "EU1"
+  CustomDomain = < Custom OTLP endpoint if applicable >
   CoralogixPrivateKey = < Private Key >
   CoralogixApplication = "Azure"
   CoralogixSubsystem = "EventHub"
@@ -38,6 +38,8 @@ module "eventhub" {
   EventhubInstanceName = < Name of EventHub Instance >
   EventhubNamespace = < Name of Eventhub Namespace >
   EventhubResourceGroupName = < Name of Eventhub ResourceGroup >
+  EventhubConsumerGroup = "$Default"
+  FunctionAppName = ""  # Optional: Custom function app name (auto-generated if not provided)
 }
 ```
 
@@ -58,8 +60,8 @@ module "eventhub" {
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_CoralogixRegion"></a> [CoralogixRegion](#input\_CoralogixRegion) | The Coralogix location region, possible options are [`Europe`, `Europe2`, `India`, `Singapore`, `US`, `US2`] | `string` | `Europe` | no |
-| <a name="input_CustomDomain"></a> [CustomDomain](#input\_CustomDomain) | Your Custom URL for the Coralogix account. Ignore unless you have a custom URL. Just the FQDN, not the whole URL. | `string` | n/a | no |
+| <a name="input_CoralogixRegion"></a> [CoralogixRegion](#input\_CoralogixRegion) | The Coralogix location region: EU1 (Ireland), EU2 (Stockholm), US1 (Ohio), US2 (Oregon), AP1 (Mumbai), AP2 (Singapore), AP3 (Jakarta) | `string` | n/a | yes |
+| <a name="input_CustomDomain"></a> [CustomDomain](#input\_CustomDomain) | Your Custom OTLP endpoint for the Coralogix account. Format: hostname:port | `string` | `ingress.customsubdomain.coralogix.com:443` | no |
 | <a name="input_CoralogixPrivateKey"></a> [CoralogixPrivateKey](#input\_CoralogixPrivateKey) | The Coralogix private key which is used to validate your authenticity | `string` | n/a | yes |
 | <a name="input_CoralogixApplication"></a> [CoralogixApplication](#input\_CoralogixApplication) | The name of your application | `string` | n/a | yes |
 | <a name="input_CoralogixSubsystem"></a> [CoralogixSubsystem](#input\_CoralogixSubsystem) | The subsystem name of your application | `string` | n/a | yes |
@@ -68,14 +70,17 @@ module "eventhub" {
 | <a name="input_FunctionAppServicePlanType"></a> [FunctionAppServicePlanType](#input\_FunctionAppServicePlanType) | The type of the App Service Plan to use for the Function App. Choose Premium if you need vNet support. | `string` | `Consumption` | yes |
 | <a name="input_EventhubInstanceName"></a> [EventhubInstanceName](#input\_EventhubInstanceName) | The name of the EventHub Instance | `string` | n/a | yes |
 | <a name="input_EventhubNamespace"></a> [EventhubNamespace](#input\_EventhubNamespace) | The name of the EventHub Namespace | `string` | n/a | yes |
-| <a name="input_EventhubResourceGroupName"></a> [EventhubResourceGroupName](#input\_EventhubResourceGroupName) | The name of the resource group that the eventhub belong to. | `string` | n/a | yes |
+| <a name="input_EventhubResourceGroupName"></a> [EventhubResourceGroupName](#input\_EventhubResourceGroupName) | The name of the resource group that the eventhub belong to | `string` | n/a | yes |
+| <a name="input_EventhubConsumerGroup"></a> [EventhubConsumerGroup](#input\_EventhubConsumerGroup) | The name of the EventHub Consumer Group | `string` | `$Default` | no |
+| <a name="input_FunctionAppName"></a> [FunctionAppName](#input\_FunctionAppName) | Optional: Custom name for the Azure Function. If not provided, defaults to `coralogix-eventhub-func-{uniqueId}` | `string` | `""` (auto-generated) | no |
 
-## Coralgoix regions
-| Coralogix region | AWS Region | Coralogix Domain |
+## Coralogix regions
+| Coralogix region | Azure Region | Coralogix OTLP Endpoint |
 |------|------------|------------|
-| `Europe` |  `eu-west-1` | coralogix.com |
-| `Europe2` |  `eu-north-1` | eu2.coralogix.com |
-| `India` | `ap-south-1`  | coralogix.in |
-| `Singapore` | `ap-southeast-1` | coralogixsg.com |
-| `US` | `us-east-2` | coralogix.us |
-| `US2` | `us-west-2` | cx498.coralogix.com |
+| `EU1` | Ireland | ingress.eu1.coralogix.com:443 |
+| `EU2` | Stockholm | ingress.eu2.coralogix.com:443 |
+| `US1` | Ohio | ingress.us1.coralogix.com:443 |
+| `US2` | Oregon | ingress.us2.coralogix.com:443 |
+| `AP1` | Mumbai | ingress.ap1.coralogix.com:443 |
+| `AP2` | Singapore | ingress.ap2.coralogix.com:443 |
+| `AP3` | Jakarta | ingress.ap3.coralogix.com:443 |
