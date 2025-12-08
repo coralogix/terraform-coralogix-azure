@@ -5,6 +5,12 @@
 <!-- ### version / full date -->
 <!-- * [Update/Bug fix] message that describes the changes that you apply -->
 
+### 2.1.0 / 08 Dec 2024
+[FEATURE] Upgrade to EventHub v3.5.0 Function App with dynamic app // subsystem name and log filtering support:
+* Added `NewlinePattern` variable - Regex pattern to split multi-line text logs into separate entries
+* Added `BlockingPattern` variable - Regex pattern to filter/block logs (e.g., `\[DEBUG\]` to block debug logs)
+* Updated Function App package to v3.5.0
+
 ### 2.0.0 / 20 Nov 2024
 [BREAKING CHANGE] Upgrade to EventHub v3.0.0 Function App with the following changes:
 * Updated Node.js runtime from 18 to 22
