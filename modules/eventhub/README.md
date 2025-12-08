@@ -40,6 +40,8 @@ module "eventhub" {
   EventhubResourceGroupName = < Name of Eventhub ResourceGroup >
   EventhubConsumerGroup = "$Default"
   FunctionAppName = ""  # Optional: Custom function app name (auto-generated if not provided)
+  NewlinePattern = ""   # Optional: Regex to split multi-line logs (e.g., "\\n")
+  BlockingPattern = ""  # Optional: Regex to filter/block logs (e.g., "\\[DEBUG\\]")
 }
 ```
 
@@ -63,8 +65,8 @@ module "eventhub" {
 | <a name="input_CoralogixRegion"></a> [CoralogixRegion](#input\_CoralogixRegion) | The Coralogix location region: EU1 (Ireland), EU2 (Stockholm), US1 (Ohio), US2 (Oregon), AP1 (Mumbai), AP2 (Singapore), AP3 (Jakarta) | `string` | n/a | yes |
 | <a name="input_CustomDomain"></a> [CustomDomain](#input\_CustomDomain) | Your Custom OTLP endpoint for the Coralogix account. Format: hostname:port | `string` | `ingress.customsubdomain.coralogix.com:443` | no |
 | <a name="input_CoralogixPrivateKey"></a> [CoralogixPrivateKey](#input\_CoralogixPrivateKey) | The Coralogix private key which is used to validate your authenticity | `string` | n/a | yes |
-| <a name="input_CoralogixApplication"></a> [CoralogixApplication](#input\_CoralogixApplication) | The name of your application | `string` | n/a | yes |
-| <a name="input_CoralogixSubsystem"></a> [CoralogixSubsystem](#input\_CoralogixSubsystem) | The subsystem name of your application | `string` | n/a | yes |
+| <a name="input_CoralogixApplication"></a> [CoralogixApplication](#input\_CoralogixApplication) | The name of your application. Supports dynamic extraction using templates `{{ $.field }}` or regex `/pattern/` | `string` | n/a | yes |
+| <a name="input_CoralogixSubsystem"></a> [CoralogixSubsystem](#input\_CoralogixSubsystem) | The subsystem name of your application. Supports dynamic extraction using templates `{{ $.field }}` or regex `/pattern/` | `string` | n/a | yes |
 | <a name="input_FunctionResourceGroupName"></a> [FunctionResourceGroupName](#input\_FunctionResourceGroupName) | The name of the resource group into which to deploy the Function App | `string` | n/a | yes |
 | <a name="input_FunctionStorageAccountName"></a> [FunctionStorageAccountName](#input\_FunctionStorageAccountName) | The name of the storage account that the Function App will use | `string` | n/a | yes |
 | <a name="input_FunctionAppServicePlanType"></a> [FunctionAppServicePlanType](#input\_FunctionAppServicePlanType) | The type of the App Service Plan to use for the Function App. Choose Premium if you need vNet support. | `string` | `Consumption` | yes |
@@ -73,6 +75,45 @@ module "eventhub" {
 | <a name="input_EventhubResourceGroupName"></a> [EventhubResourceGroupName](#input\_EventhubResourceGroupName) | The name of the resource group that the eventhub belong to | `string` | n/a | yes |
 | <a name="input_EventhubConsumerGroup"></a> [EventhubConsumerGroup](#input\_EventhubConsumerGroup) | The name of the EventHub Consumer Group | `string` | `$Default` | no |
 | <a name="input_FunctionAppName"></a> [FunctionAppName](#input\_FunctionAppName) | Optional: Custom name for the Azure Function. If not provided, defaults to `coralogix-eventhub-func-{uniqueId}` | `string` | `""` (auto-generated) | no |
+| <a name="input_NewlinePattern"></a> [NewlinePattern](#input\_NewlinePattern) | Optional: Regex pattern to split multi-line text logs into separate entries. Example: `\\n` | `string` | `""` | no |
+| <a name="input_BlockingPattern"></a> [BlockingPattern](#input\_BlockingPattern) | Optional: Regex pattern to filter/block logs. Logs matching this pattern will not be sent to Coralogix. Example: `\\[DEBUG\\]` | `string` | `""` | no |
+
+## Dynamic Application and Subsystem Names
+
+The `CoralogixApplication` and `CoralogixSubsystem` variables support dynamic extraction from log content using templates or regex patterns.
+
+### JSON Logs (Template Syntax)
+
+For JSON-formatted logs, use the template syntax with `{{ }}`:
+
+```hcl
+# Simple field extraction from JSON body
+CoralogixApplication = "{{ $.category }}"
+CoralogixSubsystem   = "{{ $.properties.appName }}"
+
+# Use enriched Azure metadata from attributes
+CoralogixSubsystem = "{{ attributes.azure.resource_group }}"
+
+# Extract with regex (case-insensitive)
+CoralogixSubsystem = "{{ $.resourceId | r'/resourcegroups/([^/]+)/i' }}"
+
+# Multiple fallbacks
+CoralogixSubsystem = "{{ $.properties.appName || $.properties.roleInstance || $.location }}"
+```
+
+### Plain Text Logs (Regex Syntax)
+
+For plain text logs, use the regex-only syntax with `/pattern/`:
+
+```hcl
+# Extract from plain text like: "APP=payment-service ENV=production STATUS=ok"
+CoralogixApplication = "/APP=([^\\s]+)/"
+CoralogixSubsystem   = "/ENV=([^\\s]+)/"
+```
+
+### Fallback Behavior
+
+When a template or regex pattern doesn't match, the function gracefully falls back to the default value `Coralogix-Azure-EventHub`.
 
 ## Coralogix regions
 | Coralogix region | Azure Region | Coralogix OTLP Endpoint |
