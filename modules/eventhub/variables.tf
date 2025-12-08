@@ -75,3 +75,15 @@ variable "FunctionAppName" {
   type        = string
   default     = ""
 }
+
+variable "NewlinePattern" {
+  description = "Optional: Regex pattern to split multi-line text logs into separate entries. Example: '\\n' to split on newlines."
+  type        = string
+  default     = ""
+}
+
+variable "BlockingPattern" {
+  description = "Optional: Regex pattern to filter/block logs. Logs matching this pattern will not be sent to Coralogix. Example: '\\[DEBUG\\]'"
+  type        = string
+  default     = ""
+}
