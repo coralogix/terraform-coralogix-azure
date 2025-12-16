@@ -7,6 +7,10 @@ coralogix_private_key = "your-coralogix-private-key"
 coralogix_application = "Azure-EventHub-example"
 coralogix_subsystem   = "EventHub-CX-example"
 
+# Optional: Dynamic Application/Subsystem selectors (leave empty for static values above)
+coralogix_application_selector = "" # e.g., "{{ $.category }}"
+coralogix_subsystem_selector   = "" # e.g., "{{ $.operationName }}"
+
 # Function App Configuration (using existing resources)
 function_resource_group       = "your-function-resource-group"
 function_storage_account_name = "yourfunctionstorageaccount"
@@ -18,3 +22,7 @@ eventhub_resource_group = "your-eventhub-resource-group"
 eventhub_namespace      = "your-eventhub-namespace"
 eventhub_instance_name  = "your-eventhub-instance"
 eventhub_consumer_group = "$Default"
+
+# Optional: Log processing
+newline_pattern  = "" # e.g., "\\n" to split multi-line logs
+blocking_pattern = "" # e.g., "\\[DEBUG\\]" to filter debug logs

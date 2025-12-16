@@ -42,6 +42,8 @@ module "eventhub" {
   FunctionAppName = ""  # Optional: Custom function app name (auto-generated if not provided)
   NewlinePattern = ""   # Optional: Regex to split multi-line logs (e.g., "\\n")
   BlockingPattern = ""  # Optional: Regex to filter/block logs (e.g., "\\[DEBUG\\]")
+  CoralogixApplicationSelector = ""  # Optional: Dynamic app name selector (e.g., "{{ $.category }}")
+  CoralogixSubsystemSelector = ""    # Optional: Dynamic subsystem selector (e.g., "{{ $.operationName }}")
 }
 ```
 
@@ -77,10 +79,12 @@ module "eventhub" {
 | <a name="input_FunctionAppName"></a> [FunctionAppName](#input\_FunctionAppName) | Optional: Custom name for the Azure Function. If not provided, defaults to `coralogix-eventhub-func-{uniqueId}` | `string` | `""` (auto-generated) | no |
 | <a name="input_NewlinePattern"></a> [NewlinePattern](#input\_NewlinePattern) | Optional: Regex pattern to split multi-line text logs into separate entries. Example: `\\n` | `string` | `""` | no |
 | <a name="input_BlockingPattern"></a> [BlockingPattern](#input\_BlockingPattern) | Optional: Regex pattern to filter/block logs. Logs matching this pattern will not be sent to Coralogix. Example: `\\[DEBUG\\]` | `string` | `""` | no |
+| <a name="input_CoralogixApplicationSelector"></a> [CoralogixApplicationSelector](#input\_CoralogixApplicationSelector) | Optional: Dynamic application name selector. Supports template syntax `{{ $.field }}` for JSON or regex `/pattern/` for plain text. Falls back to CoralogixApplication when selector doesn't match. | `string` | `""` | no |
+| <a name="input_CoralogixSubsystemSelector"></a> [CoralogixSubsystemSelector](#input\_CoralogixSubsystemSelector) | Optional: Dynamic subsystem name selector. Supports template syntax `{{ $.field }}` for JSON or regex `/pattern/` for plain text. Falls back to CoralogixSubsystem when selector doesn't match. | `string` | `""` | no |
 
 ## Dynamic Application and Subsystem Names
 
-The `CoralogixApplication` and `CoralogixSubsystem` variables support dynamic extraction from log content using templates or regex patterns.
+Use `CoralogixApplicationSelector` and `CoralogixSubsystemSelector` for dynamic extraction from log content. These selectors support templates or regex patterns and fall back to the static `CoralogixApplication`/`CoralogixSubsystem` values when no match is found.
 
 ### JSON Logs (Template Syntax)
 
@@ -88,17 +92,18 @@ For JSON-formatted logs, use the template syntax with `{{ }}`:
 
 ```hcl
 # Simple field extraction from JSON body
-CoralogixApplication = "{{ $.category }}"
-CoralogixSubsystem   = "{{ $.properties.appName }}"
+CoralogixApplicationSelector = "{{ $.category }}"
+CoralogixSubsystemSelector   = "{{ $.operationName }}"
+
+# Multiple fallbacks - tries each field until one matches
+CoralogixApplicationSelector = "{{ $.category || $.metricName }}"
+CoralogixSubsystemSelector   = "{{ $.operationName || $.ApiName }}"
 
 # Use enriched Azure metadata from attributes
-CoralogixSubsystem = "{{ attributes.azure.resource_group }}"
+CoralogixSubsystemSelector = "{{ attributes.azure.resource_group }}"
 
-# Extract with regex (case-insensitive)
-CoralogixSubsystem = "{{ $.resourceId | r'/resourcegroups/([^/]+)/i' }}"
-
-# Multiple fallbacks
-CoralogixSubsystem = "{{ $.properties.appName || $.properties.roleInstance || $.location }}"
+# Extract with regex pipe operator
+CoralogixSubsystemSelector = "{{ $.resourceId | r'/resourcegroups/([^/]+)/i' }}"
 ```
 
 ### Plain Text Logs (Regex Syntax)
@@ -107,13 +112,16 @@ For plain text logs, use the regex-only syntax with `/pattern/`:
 
 ```hcl
 # Extract from plain text like: "APP=payment-service ENV=production STATUS=ok"
-CoralogixApplication = "/APP=([^\\s]+)/"
-CoralogixSubsystem   = "/ENV=([^\\s]+)/"
+CoralogixApplicationSelector = "/APP=([^\\s]+)/"
+CoralogixSubsystemSelector   = "/ENV=([^\\s]+)/"
 ```
 
 ### Fallback Behavior
 
-When a template or regex pattern doesn't match, the function gracefully falls back to the default value `Coralogix-Azure-EventHub`.
+When a selector doesn't match, the function follows this fallback chain:
+1. **Selector** (`CoralogixApplicationSelector` / `CoralogixSubsystemSelector`) - Dynamic extraction from log body
+2. **Static value** (`CoralogixApplication` / `CoralogixSubsystem`) - Terraform variables
+3. **Default** (`coralogix-azure-eventhub` / `azure`) - Built-in defaults
 
 ## Coralogix regions
 | Coralogix region | Azure Region | Coralogix OTLP Endpoint |

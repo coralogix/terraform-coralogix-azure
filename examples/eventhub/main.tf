@@ -29,10 +29,12 @@ module "eventhub" {
   source = "../../modules/eventhub"
 
   # Coralogix Configuration
-  CoralogixRegion      = var.coralogix_region
-  CoralogixPrivateKey  = var.coralogix_private_key
-  CoralogixApplication = var.coralogix_application
-  CoralogixSubsystem   = var.coralogix_subsystem
+  CoralogixRegion              = var.coralogix_region
+  CoralogixPrivateKey          = var.coralogix_private_key
+  CoralogixApplication         = var.coralogix_application
+  CoralogixSubsystem           = var.coralogix_subsystem
+  CoralogixApplicationSelector = var.coralogix_application_selector
+  CoralogixSubsystemSelector   = var.coralogix_subsystem_selector
 
   # Function App Configuration
   FunctionResourceGroupName  = data.azurerm_resource_group.function_rg.name
@@ -45,6 +47,10 @@ module "eventhub" {
   EventhubNamespace         = var.eventhub_namespace
   EventhubInstanceName      = var.eventhub_instance_name
   EventhubConsumerGroup     = var.eventhub_consumer_group
+
+  # Optional: Log processing
+  NewlinePattern  = var.newline_pattern
+  BlockingPattern = var.blocking_pattern
 }
 
 output "sync_trigger_command" {

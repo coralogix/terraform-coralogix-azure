@@ -97,19 +97,21 @@ resource "azurerm_linux_function_app" "eventhub-function" {
   }
   app_settings = {
     # Environment variable
-    CORALOGIX_APPLICATION       = var.CoralogixApplication
-    CORALOGIX_PRIVATE_KEY       = var.CoralogixPrivateKey
-    CORALOGIX_SUBSYSTEM         = var.CoralogixSubsystem
-    OTEL_EXPORTER_OTLP_ENDPOINT = local.coralogix_regions[var.CoralogixRegion]
-    OTEL_EXPORTER_OTLP_HEADERS  = "Authorization=Bearer ${var.CoralogixPrivateKey}"
-    EVENTHUB_CONNECT_STRING     = azurerm_eventhub_authorization_rule.instance_sas.primary_connection_string
-    EVENTHUB_INSTANCE_NAME      = var.EventhubInstanceName
-    EVENTHUB_CONSUMER_GROUP     = var.EventhubConsumerGroup
-    FUNCTION_APP_NAME           = local.function_name
-    NEWLINE_PATTERN             = var.NewlinePattern
-    BLOCKING_PATTERN            = var.BlockingPattern
+    CORALOGIX_APPLICATION            = var.CoralogixApplication
+    CORALOGIX_PRIVATE_KEY            = var.CoralogixPrivateKey
+    CORALOGIX_SUBSYSTEM              = var.CoralogixSubsystem
+    CORALOGIX_APPLICATION_SELECTOR   = var.CoralogixApplicationSelector
+    CORALOGIX_SUBSYSTEM_SELECTOR     = var.CoralogixSubsystemSelector
+    OTEL_EXPORTER_OTLP_ENDPOINT      = local.coralogix_regions[var.CoralogixRegion]
+    OTEL_EXPORTER_OTLP_HEADERS       = "Authorization=Bearer ${var.CoralogixPrivateKey}"
+    EVENTHUB_CONNECT_STRING          = azurerm_eventhub_authorization_rule.instance_sas.primary_connection_string
+    EVENTHUB_INSTANCE_NAME           = var.EventhubInstanceName
+    EVENTHUB_CONSUMER_GROUP          = var.EventhubConsumerGroup
+    FUNCTION_APP_NAME                = local.function_name
+    NEWLINE_PATTERN                  = var.NewlinePattern
+    BLOCKING_PATTERN                 = var.BlockingPattern
     # Function App Source code - https://github.com/coralogix/coralogix-azure-serverless/tree/master/EventHub
-    WEBSITE_RUN_FROM_PACKAGE = "https://github.com/coralogix/coralogix-azure-serverless/releases/download/EventHub-v3.5.0/EventHub-FunctionApp.zip"
+    WEBSITE_RUN_FROM_PACKAGE = "https://github.com/coralogix/coralogix-azure-serverless/releases/download/EventHub-v3.6.1/EventHub-FunctionApp.zip"
   }
 }
 
