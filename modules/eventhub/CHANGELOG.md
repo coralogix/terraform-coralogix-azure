@@ -11,7 +11,7 @@
 * Added `CoralogixSubsystemSelector` variable - Dynamic subsystem name selector with template `{{ $.field }}` or regex `/pattern/` syntax
 * Selectors support fallback expressions with `||` operator (e.g., `{{ $.category || $.metricName }}`)
 * Falls back to static `CoralogixApplication`/`CoralogixSubsystem` when selector doesn't match
-* Updated Function App package to v3.6.0
+* Updated Function App package to v3.6.1
 
 ### 2.1.0 / 08 Dec 2024
 [FEATURE] Upgrade to EventHub v3.5.0 Function App with dynamic app // subsystem name and log filtering support:
