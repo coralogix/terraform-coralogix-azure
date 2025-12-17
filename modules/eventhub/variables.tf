@@ -87,3 +87,15 @@ variable "BlockingPattern" {
   type        = string
   default     = ""
 }
+
+variable "CoralogixApplicationSelector" {
+  description = "Optional: Dynamic application name selector. Supports template syntax '{{ $.field }}' for JSON logs or regex '/pattern/' for plain text. Falls back to CoralogixApplication when selector doesn't match."
+  type        = string
+  default     = ""
+}
+
+variable "CoralogixSubsystemSelector" {
+  description = "Optional: Dynamic subsystem name selector. Supports template syntax '{{ $.field }}' for JSON logs or regex '/pattern/' for plain text. Falls back to CoralogixSubsystem when selector doesn't match."
+  type        = string
+  default     = ""
+}

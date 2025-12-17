@@ -27,6 +27,18 @@ variable "coralogix_subsystem" {
   default     = "EventHub"
 }
 
+variable "coralogix_application_selector" {
+  description = "Optional: Dynamic application name selector. Supports template syntax '{{ $.field }}' for JSON or regex '/pattern/' for plain text."
+  type        = string
+  default     = ""
+}
+
+variable "coralogix_subsystem_selector" {
+  description = "Optional: Dynamic subsystem name selector. Supports template syntax '{{ $.field }}' for JSON or regex '/pattern/' for plain text."
+  type        = string
+  default     = ""
+}
+
 variable "function_resource_group" {
   description = "The resource group for the function app (using existing resource group)"
   type        = string
@@ -72,5 +84,17 @@ variable "eventhub_consumer_group" {
   description = "The EventHub consumer group"
   type        = string
   default     = "$Default"
+}
+
+variable "newline_pattern" {
+  description = "Optional: Regex pattern to split multi-line text logs into separate entries"
+  type        = string
+  default     = ""
+}
+
+variable "blocking_pattern" {
+  description = "Optional: Regex pattern to filter/block logs"
+  type        = string
+  default     = ""
 }
 
