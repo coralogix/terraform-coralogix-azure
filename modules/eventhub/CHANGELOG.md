@@ -5,6 +5,14 @@
 <!-- ### version / full date -->
 <!-- * [Update/Bug fix] message that describes the changes that you apply -->
 
+### 2.2.0 / 15 Dec 2024
+[FEATURE] Upgrade to EventHub v3.6.0 Function App with dynamic Application/Subsystem selector support:
+* Added `CoralogixApplicationSelector` variable - Dynamic application name selector with template `{{ $.field }}` or regex `/pattern/` syntax
+* Added `CoralogixSubsystemSelector` variable - Dynamic subsystem name selector with template `{{ $.field }}` or regex `/pattern/` syntax
+* Selectors support fallback expressions with `||` operator (e.g., `{{ $.category || $.metricName }}`)
+* Falls back to static `CoralogixApplication`/`CoralogixSubsystem` when selector doesn't match
+* Updated Function App package to v3.6.1
+
 ### 2.1.0 / 08 Dec 2024
 [FEATURE] Upgrade to EventHub v3.5.0 Function App with dynamic app // subsystem name and log filtering support:
 * Added `NewlinePattern` variable - Regex pattern to split multi-line text logs into separate entries
