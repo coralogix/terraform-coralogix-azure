@@ -65,8 +65,7 @@ module "blobstorage" {
   source  = "coralogix/azure/coralogix//modules/blobstorage"
   version = "1.0.13"
 
-  CoralogixRegion                = "Europe"
-  CustomDomain                   = < Custom FQDN if applicable >
+  OtelEndpoint                   = < OTLP endpoint URL, e.g. https://ingress.eu2.coralogix.com >
   CoralogixPrivateKey            = < Private Key >
   CoralogixApplication           = "Azure"
   CoralogixSubsystem             = "BlobStorage"
