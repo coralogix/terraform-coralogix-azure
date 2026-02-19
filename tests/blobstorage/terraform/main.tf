@@ -74,8 +74,7 @@ resource "azurerm_storage_account" "function" {
 module "blobstorage" {
   source = "../../../modules/blobstorage"
 
-  CoralogixRegion              = "Custom"
-  CustomDomain                 = var.coralogix_custom_domain
+  OtelEndpoint                 = var.otel_endpoint
   CoralogixPrivateKey         = var.coralogix_private_key
   CoralogixApplication        = var.coralogix_application
   CoralogixSubsystem          = var.coralogix_subsystem

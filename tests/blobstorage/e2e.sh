@@ -37,7 +37,7 @@ err() { echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] ERROR: $*" >&2; }
 cleanup_after_failure() {
   log "Cleaning up after failure..."
   cd "$TERRAFORM_DIR" || return 0
-  export TF_VAR_coralogix_custom_domain="${CUSTOM_DOMAIN:-}"
+  export TF_VAR_otel_endpoint="${OTEL_ENDPOINT:-}"
   export TF_VAR_coralogix_private_key="${CORALOGIX_API_KEY:-}"
   export TF_VAR_coralogix_application="${CORALOGIX_APPLICATION:-azure}"
   export TF_VAR_coralogix_subsystem="${CORALOGIX_SUBSYSTEM:-blob-storage-eventgrid-e2e}"
@@ -49,7 +49,7 @@ trap cleanup_after_failure EXIT
 # --- Step 1: Deploy Terraform (prereqs + module) ---
 log "Step 1: Deploying Terraform (RG, StorageV2, container, Event Grid system topic, BlobStorage module)..."
 cd "$TERRAFORM_DIR"
-export TF_VAR_coralogix_custom_domain="$CUSTOM_DOMAIN"
+export TF_VAR_otel_endpoint="$OTEL_ENDPOINT"
 export TF_VAR_coralogix_private_key="$CORALOGIX_API_KEY"
 export TF_VAR_coralogix_application="${CORALOGIX_APPLICATION:-azure}"
 export TF_VAR_coralogix_subsystem="${CORALOGIX_SUBSYSTEM:-blob-storage-eventgrid-e2e}"

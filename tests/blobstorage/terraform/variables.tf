@@ -1,7 +1,7 @@
-variable "coralogix_custom_domain" {
-  description = "Coralogix ingress FQDN (e.g. ingress.eu2.coralogix.com), no protocol or path."
+variable "otel_endpoint" {
+  description = "OTLP endpoint URL (e.g. https://ingress.eu2.coralogix.com)."
   type        = string
-  default     = "" # Not used by destroy; set TF_VAR_* or -var for apply.
+  default     = "" # Not used by destroy; set TF_VAR_otel_endpoint or -var for apply.
 }
 
 variable "coralogix_private_key" {
