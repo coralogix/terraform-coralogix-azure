@@ -1,15 +1,6 @@
 locals {
   function_name = join("-", ["BlobStorage", substr(var.BlobContainerName, 0, 27), random_string.this.result])
-  coralogix_regions = {
-    Europe    = "ingress.coralogix.com"
-    Europe2   = "ingress.eu2.coralogix.com"
-    India     = "ingress.coralogix.in"
-    Singapore = "ingress.coralogixsg.com"
-    US        = "ingress.coralogix.us"
-    US2       = "ingress.cx498.coralogix.com"
-    Custom    = var.CustomDomain
-  }
-  sku = var.FunctionAppServicePlanType == "Consumption" ? "Y1" : "EP1"
+  sku           = var.FunctionAppServicePlanType == "Consumption" ? "Y1" : "EP1"
 }
 
 resource "random_string" "this" {
@@ -105,11 +96,10 @@ resource "azurerm_linux_function_app" "blobstorage-function" {
     }
   }
   app_settings = {
-    # Environment variable
+    OTEL_EXPORTER_OTLP_ENDPOINT            = var.OtelEndpoint
     CORALOGIX_APP_NAME                     = var.CoralogixApplication
     CORALOGIX_PRIVATE_KEY                  = var.CoralogixPrivateKey
     CORALOGIX_SUB_SYSTEM                   = var.CoralogixSubsystem
-    CORALOGIX_URL                          = "https://${local.coralogix_regions[var.CoralogixRegion]}/api/v1/logs"
     BLOB_STORAGE_ACCOUNT_CONNECTION_STRING = data.azurerm_storage_account.blobstorage-storageaccount.primary_connection_string
     WEBSITE_RUN_FROM_PACKAGE               = "https://coralogix-public.s3.eu-west-1.amazonaws.com/azure-functions-repo/BlobViaEventGrid.zip"
     NEWLINE_PATTERN                        = var.NewlinePattern
