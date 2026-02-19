@@ -13,3 +13,6 @@
 
 ### 1.0.12 / 01 Sep 2025
 [Update] Add EnableBlobMetadata variable to enable logging metadata including the blob name and path.
+
+### 1.0.13 / 19 Feb 2026
+[Update] CDS-2391 rewrite the function to otel-logs-sdk
