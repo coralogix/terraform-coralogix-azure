@@ -27,8 +27,7 @@ provider "azurerm" {
 module "bloblstorage" {
   source = "coralogix/azure/coralogix//modules/blobstorage"
 
-  CoralogixRegion = "Europe"
-  CustomDomain = < Custom FQDN if applicable >
+  OtelEndpoint = < OTLP endpoint URL, e.g. https://ingress.eu2.coralogix.com >
   CoralogixPrivateKey = < Private Key >
   CoralogixApplication = "Azure"
   CoralogixSubsystem = "EventHub"
@@ -60,8 +59,7 @@ module "bloblstorage" {
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_CoralogixRegion"></a> [CoralogixRegion](#input\_CoralogixRegion) | The Coralogix location region, possible options are [`Europe`, `Europe2`, `India`, `Singapore`, `US`, `US2`] | `string` | `Europe` | no |
-| <a name="input_CustomDomain"></a> [CustomDomain](#input\_CustomDomain) | Your Custom URL for the Coralogix account. Ignore unless you have a custom URL. Just the FQDN, not the whole URL. | `string` | n/a | no |
+| <a name="input_OtelEndpoint"></a> [OtelEndpoint](#input\_OtelEndpoint) | Your OTLP endpoint URL (e.g. https://ingress.eu2.coralogix.com). | `string` | n/a | yes |
 | <a name="input_CoralogixPrivateKey"></a> [CoralogixPrivateKey](#input\_CoralogixPrivateKey) | The Coralogix private key which is used to validate your authenticity | `string` | n/a | yes |
 | <a name="input_CoralogixApplication"></a> [CoralogixApplication](#input\_CoralogixApplication) | The name of your application | `string` | n/a | yes |
 | <a name="input_CoralogixSubsystem"></a> [CoralogixSubsystem](#input\_CoralogixSubsystem) | The subsystem name of your application | `string` | n/a | yes |
@@ -74,12 +72,12 @@ module "bloblstorage" {
 | <a name="input_EventGridSystemTopicName"></a> [EventGridSystemTopicName](#input\_EventGridSystemTopicName) | The name of the Event Grid System Topic | `string` | n/a | yes
 | <a name="input_NewlinePattern"></a> [NewlinePattern](#input\_NewlinePattern) | The pattern to use to split the blob into lines | `string` | (?:\r\n\|\r\|\n) | yes
 
-## Coralgoix regions
-| Coralogix region | AWS Region | Coralogix Domain |
-|------|------------|------------|
-| `Europe` |  `eu-west-1` | coralogix.com |
-| `Europe2` |  `eu-north-1` | eu2.coralogix.com |
-| `India` | `ap-south-1`  | coralogix.in |
-| `Singapore` | `ap-southeast-1` | coralogixsg.com |
-| `US` | `us-east-2` | coralogix.us |
-| `US2` | `us-west-2` | cx498.coralogix.com |
+## Coralogix regions (for OtelEndpoint)
+| Coralogix region | Example OtelEndpoint |
+|------|------------|
+| Europe | `https://ingress.coralogix.com` |
+| Europe2 | `https://ingress.eu2.coralogix.com` |
+| India | `https://ingress.coralogix.in` |
+| Singapore | `https://ingress.coralogixsg.com` |
+| US | `https://ingress.coralogix.us` |
+| US2 | `https://ingress.cx498.coralogix.com` |
