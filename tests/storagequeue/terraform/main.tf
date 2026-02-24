@@ -68,15 +68,15 @@ resource "azurerm_storage_account" "function" {
 module "storagequeue" {
   source = "../../../modules/storagequeue"
 
-  CoralogixRegion             = "Custom"
-  CustomDomain                = var.coralogix_custom_domain
-  CoralogixPrivateKey        = var.coralogix_private_key
-  CoralogixApplication       = var.coralogix_application
-  CoralogixSubsystem         = var.coralogix_subsystem
-  FunctionResourceGroupName  = azurerm_resource_group.e2e.name
-  FunctionStorageAccountName = azurerm_storage_account.function.name
-  FunctionAppServicePlanType = var.function_app_service_plan_type
-  StorageQueueName           = azurerm_storage_queue.logs.name
-  StorageQueueStorageAccount = azurerm_storage_account.queue.name
+  CoralogixRegion               = "Custom"
+  CustomDomain                  = var.coralogix_custom_domain
+  CoralogixPrivateKey           = var.coralogix_private_key
+  CoralogixApplication          = var.coralogix_application
+  CoralogixSubsystem            = var.coralogix_subsystem
+  FunctionResourceGroupName     = azurerm_resource_group.e2e.name
+  FunctionStorageAccountName    = azurerm_storage_account.function.name
+  FunctionAppServicePlanType    = var.function_app_service_plan_type
+  StorageQueueName              = azurerm_storage_queue.logs.name
+  StorageQueueStorageAccount    = azurerm_storage_account.queue.name
   StorageQueueResourceGroupName = azurerm_resource_group.e2e.name
 }

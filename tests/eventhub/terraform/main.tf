@@ -90,20 +90,20 @@ resource "azurerm_storage_account" "function" {
 module "eventhub" {
   source = "../../../modules/eventhub"
 
-  CoralogixRegion             = "Custom"
-  CustomDomain                = var.coralogix_custom_domain
-  CoralogixPrivateKey         = var.coralogix_private_key
-  CoralogixApplication       = var.coralogix_application
-  CoralogixSubsystem          = var.coralogix_subsystem
-  FunctionResourceGroupName   = azurerm_resource_group.e2e.name
-  FunctionStorageAccountName  = azurerm_storage_account.function.name
-  FunctionAppServicePlanType  = var.function_app_service_plan_type
-  EventhubResourceGroupName   = azurerm_resource_group.e2e.name
-  EventhubNamespace           = azurerm_eventhub_namespace.ns.name
-  EventhubInstanceName        = azurerm_eventhub.hub.name
-  EventhubConsumerGroup       = azurerm_eventhub_consumer_group.coralogix.name
-  NewlinePattern              = var.newline_pattern
-  BlockingPattern             = var.blocking_pattern
+  CoralogixRegion              = "Custom"
+  CustomDomain                 = var.coralogix_custom_domain
+  CoralogixPrivateKey          = var.coralogix_private_key
+  CoralogixApplication         = var.coralogix_application
+  CoralogixSubsystem           = var.coralogix_subsystem
+  FunctionResourceGroupName    = azurerm_resource_group.e2e.name
+  FunctionStorageAccountName   = azurerm_storage_account.function.name
+  FunctionAppServicePlanType   = var.function_app_service_plan_type
+  EventhubResourceGroupName    = azurerm_resource_group.e2e.name
+  EventhubNamespace            = azurerm_eventhub_namespace.ns.name
+  EventhubInstanceName         = azurerm_eventhub.hub.name
+  EventhubConsumerGroup        = azurerm_eventhub_consumer_group.coralogix.name
+  NewlinePattern               = var.newline_pattern
+  BlockingPattern              = var.blocking_pattern
   CoralogixApplicationSelector = var.coralogix_application_selector
   CoralogixSubsystemSelector   = var.coralogix_subsystem_selector
 }

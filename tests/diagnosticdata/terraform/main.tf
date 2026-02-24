@@ -89,7 +89,7 @@ resource "azurerm_storage_container" "uploads" {
 resource "azurerm_monitor_diagnostic_setting" "storage_to_eventhub" {
   name                           = "diagdata-e2e-stream-to-eventhub"
   target_resource_id             = azurerm_storage_account.diag_source.id
-  eventhub_authorization_rule_id  = azurerm_eventhub_namespace_authorization_rule.send.id
+  eventhub_authorization_rule_id = azurerm_eventhub_namespace_authorization_rule.send.id
   eventhub_name                  = azurerm_eventhub.hub.name
 
   metric {
@@ -113,9 +113,9 @@ module "diagnosticdata" {
 
   CoralogixRegion            = "Custom"
   CustomDomain               = var.coralogix_custom_domain
-  CoralogixPrivateKey       = var.coralogix_private_key
-  CoralogixApplication      = var.coralogix_application
-  CoralogixSubsystem        = var.coralogix_subsystem
+  CoralogixPrivateKey        = var.coralogix_private_key
+  CoralogixApplication       = var.coralogix_application
+  CoralogixSubsystem         = var.coralogix_subsystem
   FunctionResourceGroupName  = azurerm_resource_group.e2e.name
   FunctionStorageAccountName = azurerm_storage_account.function.name
   FunctionAppServicePlanType = var.function_app_service_plan_type

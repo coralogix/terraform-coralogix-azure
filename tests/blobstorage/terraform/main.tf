@@ -74,18 +74,18 @@ resource "azurerm_storage_account" "function" {
 module "blobstorage" {
   source = "../../../modules/blobstorage"
 
-  OtelEndpoint                 = var.otel_endpoint
-  CoralogixPrivateKey         = var.coralogix_private_key
-  CoralogixApplication        = var.coralogix_application
-  CoralogixSubsystem          = var.coralogix_subsystem
-  FunctionResourceGroupName   = azurerm_resource_group.e2e.name
-  FunctionStorageAccountName  = azurerm_storage_account.function.name
-  FunctionAppServicePlanType  = var.function_app_service_plan_type
-  BlobContainerName           = azurerm_storage_container.logs.name
-  BlobContainerStorageAccount = azurerm_storage_account.blob.name
+  OtelEndpoint                   = var.otel_endpoint
+  CoralogixPrivateKey            = var.coralogix_private_key
+  CoralogixApplication           = var.coralogix_application
+  CoralogixSubsystem             = var.coralogix_subsystem
+  FunctionResourceGroupName      = azurerm_resource_group.e2e.name
+  FunctionStorageAccountName     = azurerm_storage_account.function.name
+  FunctionAppServicePlanType     = var.function_app_service_plan_type
+  BlobContainerName              = azurerm_storage_container.logs.name
+  BlobContainerStorageAccount    = azurerm_storage_account.blob.name
   BlobContainerResourceGroupName = azurerm_resource_group.e2e.name
-  EventGridSystemTopicName    = azurerm_eventgrid_system_topic.storage.name
-  NewlinePattern              = var.newline_pattern
-  DebugEnabled                = var.debug_enabled
-  EnableBlobMetadata          = var.enable_blob_metadata
+  EventGridSystemTopicName       = azurerm_eventgrid_system_topic.storage.name
+  NewlinePattern                 = var.newline_pattern
+  DebugEnabled                   = var.debug_enabled
+  EnableBlobMetadata             = var.enable_blob_metadata
 }

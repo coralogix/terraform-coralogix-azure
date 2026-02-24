@@ -47,7 +47,7 @@ resource "azurerm_storage_account" "blob" {
 
 resource "azurerm_storage_container" "logs" {
   name                  = "logs"
-  storage_account_name   = azurerm_storage_account.blob.name
+  storage_account_name  = azurerm_storage_account.blob.name
   container_access_type = "private"
 }
 
@@ -72,28 +72,28 @@ resource "azurerm_eventgrid_event_subscription" "storage_to_eventhub" {
   name                 = "${local.name_prefix}-storage-to-eh"
   scope                = azurerm_storage_account.blob.id
   eventhub_endpoint_id = azurerm_eventhub.hub.id
-  included_event_types  = ["Microsoft.Storage.BlobCreated"]
+  included_event_types = ["Microsoft.Storage.BlobCreated"]
 }
 
 module "blobtootel" {
   source = "../../../modules/blobtootel"
 
-  OtelEndpoint                  = var.otel_endpoint
+  OtelEndpoint                   = var.otel_endpoint
   CoralogixDirectMode            = var.coralogix_direct_mode
-  CoralogixApiKey               = var.coralogix_api_key
-  CoralogixApplication          = var.coralogix_application
-  CoralogixSubsystem            = var.coralogix_subsystem
-  NewlinePattern                = var.newline_pattern
-  PrefixFilter                  = var.prefix_filter
-  SuffixFilter                  = var.suffix_filter
-  FunctionResourceGroupName     = azurerm_resource_group.e2e.name
-  FunctionAppServicePlanType    = var.function_app_service_plan_type
-  EventHubNamespace             = azurerm_eventhub_namespace.ns.name
-  EventHubName                  = azurerm_eventhub.hub.name
-  EventHubResourceGroup         = azurerm_resource_group.e2e.name
-  BlobContainerStorageAccount   = azurerm_storage_account.blob.name
+  CoralogixApiKey                = var.coralogix_api_key
+  CoralogixApplication           = var.coralogix_application
+  CoralogixSubsystem             = var.coralogix_subsystem
+  NewlinePattern                 = var.newline_pattern
+  PrefixFilter                   = var.prefix_filter
+  SuffixFilter                   = var.suffix_filter
+  FunctionResourceGroupName      = azurerm_resource_group.e2e.name
+  FunctionAppServicePlanType     = var.function_app_service_plan_type
+  EventHubNamespace              = azurerm_eventhub_namespace.ns.name
+  EventHubName                   = azurerm_eventhub.hub.name
+  EventHubResourceGroup          = azurerm_resource_group.e2e.name
+  BlobContainerStorageAccount    = azurerm_storage_account.blob.name
   BlobContainerResourceGroupName = azurerm_resource_group.e2e.name
-  VirtualNetworkName            = var.virtual_network_name
-  SubnetName                    = var.subnet_name
-  VirtualNetworkResourceGroup   = var.virtual_network_resource_group
+  VirtualNetworkName             = var.virtual_network_name
+  SubnetName                     = var.subnet_name
+  VirtualNetworkResourceGroup    = var.virtual_network_resource_group
 }
