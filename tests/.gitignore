@@ -1,0 +1,18 @@
+# Terraform
+**/terraform/.terraform/
+**/terraform/.terraform.lock.hcl
+**/*.tfstate
+**/*.tfstate.*
+**/terraform/terraform.tfvars
+**/crash.log
+**/override.tf
+**/override.tf.json
+**/*_override.tf
+**/*_override.tf.json
+
+# E2E temp files
+.e2e-*.tmp
+*.tmp
+
+# ARM params (serverless-style; not used here but ignore if present)
+arm-params.json
