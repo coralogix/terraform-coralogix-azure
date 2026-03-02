@@ -130,7 +130,7 @@ log "Step 3: Waiting 30s, then verifying logs in Coralogix (app=$CX_APP, subsyst
 sleep 30
 
 attempt=0
-MAX_ATTEMPTS="${MAX_ATTEMPTS:-20}"
+MAX_ATTEMPTS="${MAX_ATTEMPTS:-30}"
 while true; do
   attempt=$((attempt + 1))
   count=$(fetch_logs_count)

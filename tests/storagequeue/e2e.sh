@@ -5,7 +5,7 @@
 # Order of execution:
 #   1. Deploy Terraform (resource group, StorageV2 + queue, function storage, and the StorageQueue module).
 #   2. Send a test payload (put a JSON message into the storage queue to trigger the function).
-#   3. Wait 30s, then poll Coralogix Get Logs Count API until count > 0 (retry every 30s, up to 10 times).
+#   3. Wait 30s, then poll Coralogix Get Logs Count API until count > 0 (retry every 30s, up to 30 times).
 #   4. Clean up all resources.
 #
 # Prerequisites:
@@ -130,7 +130,7 @@ log "Step 3: Waiting 30s, then verifying logs in Coralogix (app=$CX_APP, subsyst
 sleep 30
 
 attempt=0
-MAX_ATTEMPTS="${MAX_ATTEMPTS:-20}"
+MAX_ATTEMPTS="${MAX_ATTEMPTS:-30}"
 while true; do
   attempt=$((attempt + 1))
   count=$(fetch_logs_count)

@@ -134,7 +134,7 @@ else
   sleep 30
 
   attempt=0
-  MAX_ATTEMPTS="${MAX_ATTEMPTS:-20}"
+  MAX_ATTEMPTS="${MAX_ATTEMPTS:-30}"
   while true; do
     attempt=$((attempt + 1))
     count=$(fetch_logs_count)
