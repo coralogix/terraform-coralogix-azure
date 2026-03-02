@@ -27,6 +27,10 @@ TERRAFORM_DIR="${SCRIPT_DIR}/terraform"
 
 CORALOGIX_QUERY_API_KEY="${CORALOGIX_QUERY_API_KEY:-${CORALOGIX_API_KEY}}"
 
+# Application and subsystem names (keep consistent for deployment and verification)
+CX_APP="${CORALOGIX_APPLICATION:-azure}"
+CX_SUBSYS="${CORALOGIX_SUBSYSTEM:-blob-storage-eventgrid-e2e}"
+
 CUSTOM_DOMAIN="${OTEL_ENDPOINT#*://}"
 CUSTOM_DOMAIN="${CUSTOM_DOMAIN%%/*}"
 CUSTOM_DOMAIN="${CUSTOM_DOMAIN%%:*}"
@@ -39,8 +43,8 @@ cleanup_after_failure() {
   cd "$TERRAFORM_DIR" || return 0
   export TF_VAR_otel_endpoint="${OTEL_ENDPOINT:-}"
   export TF_VAR_coralogix_private_key="${CORALOGIX_API_KEY:-}"
-  export TF_VAR_coralogix_application="${CORALOGIX_APPLICATION:-azure}"
-  export TF_VAR_coralogix_subsystem="${CORALOGIX_SUBSYSTEM:-blob-storage-eventgrid-e2e}"
+  export TF_VAR_coralogix_application="${CX_APP}"
+  export TF_VAR_coralogix_subsystem="${CX_SUBSYS}"
   export TF_VAR_function_app_service_plan_type="${FUNCTION_APP_SERVICE_PLAN_TYPE:-Consumption}"
   terraform destroy -input=false -auto-approve 2>/dev/null || true
 }
@@ -51,8 +55,8 @@ log "Step 1: Deploying Terraform (RG, StorageV2, container, Event Grid system to
 cd "$TERRAFORM_DIR"
 export TF_VAR_otel_endpoint="$OTEL_ENDPOINT"
 export TF_VAR_coralogix_private_key="$CORALOGIX_API_KEY"
-export TF_VAR_coralogix_application="${CORALOGIX_APPLICATION:-azure}"
-export TF_VAR_coralogix_subsystem="${CORALOGIX_SUBSYSTEM:-blob-storage-eventgrid-e2e}"
+export TF_VAR_coralogix_application="$CX_APP"
+export TF_VAR_coralogix_subsystem="$CX_SUBSYS"
 export TF_VAR_function_app_service_plan_type="${FUNCTION_APP_SERVICE_PLAN_TYPE:-Consumption}"
 
 terraform init -input=false
@@ -101,8 +105,7 @@ CX_API_HOST="${OTEL_ENDPOINT#*://}"
 CX_API_HOST="${CX_API_HOST%%:*}"
 CX_API_HOST="${CX_API_HOST/#ingress./api.}"
 CX_LOGS_COUNT_URL="https://${CX_API_HOST}/mgmt/openapi/latest/dataplans/data-usage/v2/logs:count"
-# BlobViaEventGrid function sends with subsystem from var (blob-storage-eventgrid-e2e); blobstorage module uses CORALOGIX_SUB_SYSTEM. Use same as we passed.
-CX_SUBSYS="${CORALOGIX_SUBSYSTEM:-blob-storage-eventgrid-e2e}"
+# BlobViaEventGrid function sends with subsystem from var (blob-storage-eventgrid-e2e); use same as we passed.
 
 now_minus_10m() {
   if date -u -d '10 min ago' +%Y-%m-%dT%H:%M:%S.000Z 2>/dev/null; then
@@ -119,16 +122,17 @@ fetch_logs_count() {
     --data-urlencode "date_range.fromDate=$from" \
     --data-urlencode "date_range.toDate=$to" \
     --data-urlencode "resolution=10m" \
-    --data-urlencode "filters.application=azure" \
+    --data-urlencode "filters.application=$CX_APP" \
     --data-urlencode "filters.subsystem=$CX_SUBSYS" \
     --data-urlencode "subsystem_aggregation=true" \
     -H "Authorization: Bearer $CORALOGIX_QUERY_API_KEY" | head -1 | jq -r '(.result.logsCount // []) | map(.logsCount | tonumber) | add // 0'
 }
 
-log "Step 3: Waiting 30s, then verifying logs in Coralogix (app=azure, subsystem=$CX_SUBSYS)..."
+log "Step 3: Waiting 30s, then verifying logs in Coralogix (app=$CX_APP, subsystem=$CX_SUBSYS)..."
 sleep 30
 
 attempt=0
+MAX_ATTEMPTS="${MAX_ATTEMPTS:-20}"
 while true; do
   attempt=$((attempt + 1))
   count=$(fetch_logs_count)
@@ -136,11 +140,11 @@ while true; do
     log "Step 3: Logs verified in Coralogix (count=$count)."
     break
   fi
-  if [[ $attempt -ge 10 ]]; then
-    err "Step 3: No logs received in Coralogix after 10 attempts (last count=${count:-unknown})."
+  if [[ $attempt -ge "$MAX_ATTEMPTS" ]]; then
+    err "Step 3: No logs received in Coralogix after $MAX_ATTEMPTS attempts (last count=${count:-unknown})."
     exit 1
   fi
-  log "Step 3: No logs yet (attempt $attempt/10), retrying in 30s..."
+  log "Step 3: No logs yet (attempt $attempt/$MAX_ATTEMPTS), retrying in 30s..."
   sleep 30
 done
 

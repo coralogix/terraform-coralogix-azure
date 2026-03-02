@@ -1,12 +1,14 @@
 name: E2E Tests
 
 on:
+  workflow_dispatch:
   push:
     branches:
       # Uncomment when ready for production
       #   - master
       - e2e-stage2
     paths:
+      - ".github/**"
       - "modules/storagequeue/**"
       - "modules/eventhub/**"
       - "modules/diagnosticdata/**"
@@ -21,6 +23,10 @@ on:
 #   schedule:
 #     # Every morning 8am UTC
 #     - cron: "0 8 * * *"
+
+permissions:
+  contents: read
+  id-token: write   # required for Azure OIDC / federated login
 
 jobs:
   detect-changes:

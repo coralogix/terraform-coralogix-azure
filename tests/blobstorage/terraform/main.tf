@@ -22,7 +22,7 @@ provider "azurerm" {
 
 locals {
   name_prefix = "blobviaeg-e2e"
-  location    = "eastus"
+  location    = "westeurope"
 }
 
 resource "azurerm_resource_group" "e2e" {

@@ -26,6 +26,10 @@ TERRAFORM_DIR="${SCRIPT_DIR}/terraform"
 
 CORALOGIX_QUERY_API_KEY="${CORALOGIX_QUERY_API_KEY:-${CORALOGIX_API_KEY}}"
 
+# Application and subsystem names (keep consistent for deployment and verification)
+CX_APP="${CORALOGIX_APPLICATION:-azure}"
+CX_SUBSYS="${CORALOGIX_SUBSYSTEM:-eventhub-e2e}"
+
 # CustomDomain for EventHub module: hostname:port
 CUSTOM_DOMAIN="${OTEL_ENDPOINT#*://}"
 CUSTOM_DOMAIN="${CUSTOM_DOMAIN%%/*}"
@@ -41,8 +45,8 @@ cleanup_after_failure() {
   cd "$TERRAFORM_DIR" || return 0
   export TF_VAR_coralogix_custom_domain="${CUSTOM_DOMAIN:-}"
   export TF_VAR_coralogix_private_key="${CORALOGIX_API_KEY:-}"
-  export TF_VAR_coralogix_application="${CORALOGIX_APPLICATION:-azure}"
-  export TF_VAR_coralogix_subsystem="${CORALOGIX_SUBSYSTEM:-eventhub-e2e}"
+  export TF_VAR_coralogix_application="${CX_APP}"
+  export TF_VAR_coralogix_subsystem="${CX_SUBSYS}"
   export TF_VAR_function_app_service_plan_type="${FUNCTION_APP_SERVICE_PLAN_TYPE:-Consumption}"
   terraform destroy -input=false -auto-approve 2>/dev/null || true
 }
@@ -53,8 +57,8 @@ log "Step 1: Deploying Terraform (Event Hub + EventHub module)..."
 cd "$TERRAFORM_DIR"
 export TF_VAR_coralogix_custom_domain="$CUSTOM_DOMAIN"
 export TF_VAR_coralogix_private_key="$CORALOGIX_API_KEY"
-export TF_VAR_coralogix_application="${CORALOGIX_APPLICATION:-azure}"
-export TF_VAR_coralogix_subsystem="${CORALOGIX_SUBSYSTEM:-eventhub-e2e}"
+export TF_VAR_coralogix_application="$CX_APP"
+export TF_VAR_coralogix_subsystem="$CX_SUBSYS"
 export TF_VAR_function_app_service_plan_type="${FUNCTION_APP_SERVICE_PLAN_TYPE:-Consumption}"
 
 terraform init -input=false
@@ -126,6 +130,7 @@ log "Step 3: Waiting 30s, then verifying logs in Coralogix (app=$CX_APP, subsyst
 sleep 30
 
 attempt=0
+MAX_ATTEMPTS="${MAX_ATTEMPTS:-20}"
 while true; do
   attempt=$((attempt + 1))
   count=$(fetch_logs_count)
@@ -133,11 +138,11 @@ while true; do
     log "Step 3: Logs verified in Coralogix (count=$count)."
     break
   fi
-  if [[ $attempt -ge 10 ]]; then
-    err "Step 3: No logs received in Coralogix after 10 attempts (last count=${count:-unknown})."
+  if [[ $attempt -ge "$MAX_ATTEMPTS" ]]; then
+    err "Step 3: No logs received in Coralogix after $MAX_ATTEMPTS attempts (last count=${count:-unknown})."
     exit 1
   fi
-  log "Step 3: No logs yet (attempt $attempt/10), retrying in 30s..."
+  log "Step 3: No logs yet (attempt $attempt/$MAX_ATTEMPTS), retrying in 30s..."
   sleep 30
 done
 
