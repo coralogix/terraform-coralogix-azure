@@ -138,8 +138,6 @@ output "RegionCheck" {
   value = data.azurerm_resource_group.functionRG.location == data.azurerm_resource_group.blobtootel-resourcegroup.location ? "[Info] Azure Function WAS deployed in the same region as the Storage Blob" : "[Notice] Azure Function WAS NOT deployed in the same region as the Storage Blob"
 }
 
-// Dumb change to trigger a new build
 output "SyncTriggerCommand" {
   value = "Run this command to sync your StorageQueue Triggers:\n\taz resource invoke-action -g ${var.FunctionResourceGroupName} -n ${local.function_name} --action syncfunctiontriggers --resource-type Microsoft.Web/sites"
 }
-
