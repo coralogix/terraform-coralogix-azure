@@ -89,9 +89,13 @@ EVENTHUB_SEND_CONNECTION_STRING=$(terraform output -raw eventhub_send_connection
 log "Terraform outputs: RG=$RG_NAME, EventHub=$EVENTHUB_NAMESPACE/$EVENTHUB_NAME, ConsumerGroup=$EVENTHUB_CONSUMER_GROUP"
 
 # --- Step 1c: Sync function triggers, then wait before sending data ---
+FUNCTION_APP_NAME=$(az functionapp list --resource-group "$RG_NAME" --query "[0].name" -o tsv)
+if [[ -z "${FUNCTION_APP_NAME:-}" ]]; then
+  err "Step 1c: No function app found in resource group $RG_NAME."
+  exit 1
+fi
 log "Step 1c: Syncing function triggers..."
-sync_cmd=$(terraform output -raw sync_trigger_command)
-eval "$sync_cmd"
+az resource invoke-action -g "$RG_NAME" -n "$FUNCTION_APP_NAME" --action syncfunctiontriggers --resource-type Microsoft.Web/sites
 log "Step 1c: Waiting 15s for triggers to register..."
 sleep 15
 

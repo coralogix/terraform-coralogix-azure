@@ -30,7 +30,3 @@ output "storage_account_connection_string" {
 output "blob_container_name" {
   value = azurerm_storage_container.uploads.name
 }
-
-output "sync_trigger_command" {
-  value = module.diagnosticdata.SyncTriggerAzCommand
-}

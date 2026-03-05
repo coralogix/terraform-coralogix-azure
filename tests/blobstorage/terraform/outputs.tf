@@ -22,7 +22,3 @@ output "storage_account_connection_string" {
   value     = azurerm_storage_account.blob.primary_connection_string
   sensitive = true
 }
-
-output "sync_trigger_command" {
-  value = module.blobstorage.SyncTriggerAzCommand
-}

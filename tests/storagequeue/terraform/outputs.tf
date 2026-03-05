@@ -28,7 +28,3 @@ output "storage_account_connection_string" {
   description = "Storage account connection string for putting test messages into the queue."
   sensitive   = true
 }
-
-output "sync_trigger_command" {
-  value = module.storagequeue.SyncTriggerAzCommand
-}

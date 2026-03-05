@@ -98,7 +98,3 @@ output "RegionCheck" {
 output "SyncTriggerCommand" {
   value = "Run this command to sync your StorageQueue Triggers:\n\taz resource invoke-action -g ${var.FunctionResourceGroupName} -n ${local.function_name} --action syncfunctiontriggers --resource-type Microsoft.Web/sites"
 }
-
-output "SyncTriggerAzCommand" {
-  value = "az resource invoke-action -g ${var.FunctionResourceGroupName} -n ${local.function_name} --action syncfunctiontriggers --resource-type Microsoft.Web/sites"
-}

@@ -27,7 +27,3 @@ output "eventhub_send_connection_string" {
   description = "Connection string for sending events to the Event Hub (used by e2e script)."
   sensitive   = true
 }
-
-output "sync_trigger_command" {
-  value = module.eventhub.SyncTriggerAzCommand
-}
