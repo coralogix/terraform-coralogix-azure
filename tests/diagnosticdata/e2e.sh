@@ -4,6 +4,7 @@
 #
 # Order of execution:
 #   1. Deploy Terraform (RG, Event Hub, storage + diagnostic setting, function storage, DiagnosticData module).
+#   1c. Sync function triggers (az resource invoke-action), then wait 15s.
 #   2. Upload blobs to generate storage transactions (diagnostic setting streams to Event Hub).
 #   3. Wait 2 min, then poll Coralogix Data Usage API until subsystem units > 0.
 #   4. Clean up all resources.
@@ -87,6 +88,13 @@ STORAGE_CONNECTION_STRING=$(terraform output -raw storage_account_connection_str
 CONTAINER_NAME=$(terraform output -raw blob_container_name)
 
 log "Terraform outputs: RG=$RG_NAME, EventHub=$EVENTHUB_NAMESPACE/$EVENTHUB_NAME, Storage container=$CONTAINER_NAME"
+
+# --- Step 1c: Sync function triggers, then wait before sending data ---
+log "Step 1c: Syncing function triggers..."
+sync_cmd=$(terraform output -raw sync_trigger_command)
+eval "$sync_cmd"
+log "Step 1c: Waiting 15s for triggers to register..."
+sleep 15
 
 # --- Step 2: Upload blobs to generate storage transactions ---
 log "Step 2: Uploading $NUM_BLOBS blobs to container $CONTAINER_NAME to trigger diagnostic data..."

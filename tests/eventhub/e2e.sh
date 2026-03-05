@@ -4,6 +4,7 @@
 #
 # Order of execution:
 #   1. Deploy Terraform (RG, Event Hub namespace/hub/consumer group/auth rules, function storage, EventHub module).
+#   1c. Sync function triggers (az resource invoke-action), then wait 15s.
 #   2. Send test events to the Event Hub to trigger the function.
 #   3. Wait 30s, then poll Coralogix Get Logs Count API until count > 0.
 #   4. Clean up all resources.
@@ -86,6 +87,13 @@ EVENTHUB_CONSUMER_GROUP=$(terraform output -raw eventhub_consumer_group_name)
 EVENTHUB_SEND_CONNECTION_STRING=$(terraform output -raw eventhub_send_connection_string)
 
 log "Terraform outputs: RG=$RG_NAME, EventHub=$EVENTHUB_NAMESPACE/$EVENTHUB_NAME, ConsumerGroup=$EVENTHUB_CONSUMER_GROUP"
+
+# --- Step 1c: Sync function triggers, then wait before sending data ---
+log "Step 1c: Syncing function triggers..."
+sync_cmd=$(terraform output -raw sync_trigger_command)
+eval "$sync_cmd"
+log "Step 1c: Waiting 15s for triggers to register..."
+sleep 15
 
 # --- Step 2: Send test events to Event Hub ---
 log "Step 2: Sending test event (JSON payload) to Event Hub..."

@@ -4,6 +4,7 @@
 #
 # Order of execution:
 #   1. Deploy Terraform (RG, storage, container, Event Hub, Event Grid subscription, BlobToOtel module).
+#   1c. Sync function triggers (az resource invoke-action), then wait 15s.
 #   2. Upload a test blob to trigger Event Grid → Event Hub → function.
 #   3. Wait 30s, then poll Coralogix Get Logs Count API until count > 0.
 #   4. Clean up all resources.
@@ -82,6 +83,13 @@ CONTAINER_NAME=$(terraform output -raw blob_container_name)
 STORAGE_CONNECTION_STRING=$(terraform output -raw storage_account_connection_string)
 
 log "Terraform outputs: RG=$RG_NAME, Storage=$STORAGE_ACCOUNT, Container=$CONTAINER_NAME"
+
+# --- Step 1c: Sync function triggers, then wait before sending data ---
+log "Step 1c: Syncing function triggers..."
+sync_cmd=$(terraform output -raw sync_trigger_command)
+eval "$sync_cmd"
+log "Step 1c: Waiting 15s for triggers to register..."
+sleep 15
 
 # --- Step 2: Upload test blob to trigger function ---
 log "Step 2: Uploading test blob to trigger the function..."
