@@ -4,8 +4,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-      # Uncomment when ready for production
-      #   - master
+      - master
       - e2e-stage2
     paths:
       - ".github/**"
@@ -19,11 +18,6 @@ on:
       - "tests/diagnosticdata/**"
       - "tests/blobstorage/**"
       - "tests/blobtootel/**"
-# Uncomment when ready for production
-#   schedule:
-#     # Every morning 8am UTC
-#     - cron: "0 8 * * *"
-
 permissions:
   contents: read
   id-token: write   # required for Azure OIDC / federated login
@@ -37,7 +31,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5
-        if: github.event_name != 'schedule'
         with:
           fetch-depth: 0
 
@@ -67,8 +60,7 @@ jobs:
       - name: Set packages matrix
         id: set-packages
         run: |
-          # Delete 2nd part of the if statement when enabling master/schedule
-          if [[ "${{ github.event_name }}" == "schedule" ]] || [[ "${{ github.ref }}" == "refs/heads/e2e-stage2" ]]; then
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
             echo 'packages=["storagequeue","eventhub","diagnosticdata","blobstorage","blobtootel"]' >> $GITHUB_OUTPUT
             echo 'has-changes=true' >> $GITHUB_OUTPUT
           else
