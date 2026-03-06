@@ -1,23 +1,14 @@
 name: E2E Tests
 
 on:
-  workflow_dispatch:
-  push:
+  workflow_run:
+    workflows:
+      - Release Modules
     branches:
       - master
-      - e2e-stage2
-    paths:
-      - ".github/**"
-      - "modules/storagequeue/**"
-      - "modules/eventhub/**"
-      - "modules/diagnosticdata/**"
-      - "modules/blobstorage/**"
-      - "modules/blobtootel/**"
-      - "tests/storagequeue/**"
-      - "tests/eventhub/**"
-      - "tests/diagnosticdata/**"
-      - "tests/blobstorage/**"
-      - "tests/blobtootel/**"
+    types:
+      - completed
+
 permissions:
   contents: read
   id-token: write   # required for Azure OIDC / federated login
@@ -25,6 +16,7 @@ permissions:
 jobs:
   detect-changes:
     runs-on: ubuntu-latest
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     outputs:
       packages: ${{ steps.set-packages.outputs.packages }}
       has-changes: ${{ steps.set-packages.outputs.has-changes }}
@@ -60,7 +52,7 @@ jobs:
       - name: Set packages matrix
         id: set-packages
         run: |
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" || "${{ github.event_name }}" == "workflow_run" ]]; then
             echo 'packages=["storagequeue","eventhub","diagnosticdata","blobstorage","blobtootel"]' >> $GITHUB_OUTPUT
             echo 'has-changes=true' >> $GITHUB_OUTPUT
           else
