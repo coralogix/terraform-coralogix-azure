@@ -4,6 +4,7 @@
 #
 # Order of execution:
 #   1. Deploy Terraform (RG, Event Hub, storage + diagnostic setting, function storage, DiagnosticData module).
+#   1c. Sync function triggers (az resource invoke-action), then wait 15s.
 #   2. Upload blobs to generate storage transactions (diagnostic setting streams to Event Hub).
 #   3. Wait 2 min, then poll Coralogix Data Usage API until subsystem units > 0.
 #   4. Clean up all resources.
@@ -28,6 +29,10 @@ NUM_BLOBS="${NUM_BLOBS:-8}"
 
 CORALOGIX_QUERY_API_KEY="${CORALOGIX_QUERY_API_KEY:-${CORALOGIX_API_KEY}}"
 
+# Application and subsystem names (keep consistent for deployment and verification)
+CX_APP="${CORALOGIX_APPLICATION:-azure}"
+CX_SUBSYS="${CORALOGIX_SUBSYSTEM:-diagnosticdata-e2e}"
+
 CUSTOM_DOMAIN="${OTEL_ENDPOINT#*://}"
 CUSTOM_DOMAIN="${CUSTOM_DOMAIN%%/*}"
 CUSTOM_DOMAIN="${CUSTOM_DOMAIN%%:*}"
@@ -40,8 +45,8 @@ cleanup_after_failure() {
   cd "$TERRAFORM_DIR" || return 0
   export TF_VAR_coralogix_custom_domain="${CUSTOM_DOMAIN:-}"
   export TF_VAR_coralogix_private_key="${CORALOGIX_API_KEY:-}"
-  export TF_VAR_coralogix_application="${CORALOGIX_APPLICATION:-azure}"
-  export TF_VAR_coralogix_subsystem="${CORALOGIX_SUBSYSTEM:-diagnosticdata-e2e}"
+  export TF_VAR_coralogix_application="${CX_APP}"
+  export TF_VAR_coralogix_subsystem="${CX_SUBSYS}"
   export TF_VAR_function_app_service_plan_type="${FUNCTION_APP_SERVICE_PLAN_TYPE:-Consumption}"
   terraform destroy -input=false -auto-approve 2>/dev/null || true
 }
@@ -52,8 +57,8 @@ log "Step 1: Deploying Terraform (RG, Event Hub, storage + diagnostic setting, D
 cd "$TERRAFORM_DIR"
 export TF_VAR_coralogix_custom_domain="$CUSTOM_DOMAIN"
 export TF_VAR_coralogix_private_key="$CORALOGIX_API_KEY"
-export TF_VAR_coralogix_application="${CORALOGIX_APPLICATION:-azure}"
-export TF_VAR_coralogix_subsystem="${CORALOGIX_SUBSYSTEM:-diagnosticdata-e2e}"
+export TF_VAR_coralogix_application="$CX_APP"
+export TF_VAR_coralogix_subsystem="$CX_SUBSYS"
 export TF_VAR_function_app_service_plan_type="${FUNCTION_APP_SERVICE_PLAN_TYPE:-Consumption}"
 
 terraform init -input=false
@@ -83,6 +88,17 @@ STORAGE_CONNECTION_STRING=$(terraform output -raw storage_account_connection_str
 CONTAINER_NAME=$(terraform output -raw blob_container_name)
 
 log "Terraform outputs: RG=$RG_NAME, EventHub=$EVENTHUB_NAMESPACE/$EVENTHUB_NAME, Storage container=$CONTAINER_NAME"
+
+# --- Step 1c: Sync function triggers, then wait before sending data ---
+FUNCTION_APP_NAME=$(az functionapp list --resource-group "$RG_NAME" --query "[0].name" -o tsv)
+if [[ -z "${FUNCTION_APP_NAME:-}" ]]; then
+  err "Step 1c: No function app found in resource group $RG_NAME."
+  exit 1
+fi
+log "Step 1c: Syncing function triggers..."
+az resource invoke-action -g "$RG_NAME" -n "$FUNCTION_APP_NAME" --action syncfunctiontriggers --resource-type Microsoft.Web/sites
+log "Step 1c: Waiting 15s for triggers to register..."
+sleep 15
 
 # --- Step 2: Upload blobs to generate storage transactions ---
 log "Step 2: Uploading $NUM_BLOBS blobs to container $CONTAINER_NAME to trigger diagnostic data..."
@@ -140,7 +156,7 @@ fetch_data_usage_units() {
 }
 
 WAIT_INITIAL="${WAIT_INITIAL:-120}"
-MAX_ATTEMPTS="${MAX_ATTEMPTS:-15}"
+MAX_ATTEMPTS="${MAX_ATTEMPTS:-30}"
 
 log "Step 3: Waiting ${WAIT_INITIAL}s for diagnostic data to flow, then verifying data in Coralogix (subsystem=$CX_SUBSYS)..."
 sleep "$WAIT_INITIAL"

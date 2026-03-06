@@ -4,6 +4,7 @@
 #
 # Order of execution:
 #   1. Deploy Terraform (RG, storage, container, Event Hub, Event Grid subscription, BlobToOtel module).
+#   1c. Sync function triggers (az resource invoke-action), then wait 15s.
 #   2. Upload a test blob to trigger Event Grid → Event Hub → function.
 #   3. Wait 30s, then poll Coralogix Get Logs Count API until count > 0.
 #   4. Clean up all resources.
@@ -23,8 +24,11 @@ TERRAFORM_DIR="${SCRIPT_DIR}/terraform"
 
 : "${OTEL_ENDPOINT:?Set OTEL_ENDPOINT (e.g. https://ingress.coralogix.com)}"
 
-# BlobToOtel can run without Coralogix API key (OTLP to Coralogix endpoint); verification needs query key
 CORALOGIX_QUERY_API_KEY="${CORALOGIX_QUERY_API_KEY:-${CORALOGIX_API_KEY}}"
+
+# Application and subsystem names (keep consistent for deployment and verification)
+CX_APP="${CORALOGIX_APPLICATION:-azure}"
+CX_SUBSYS="${CORALOGIX_SUBSYSTEM:-blob-storage-eventhub-e2e}"
 
 log() { echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] $*"; }
 err() { echo "[$(date -u +%Y-%m-%dT%H:%M:%SZ)] ERROR: $*" >&2; }
@@ -35,8 +39,8 @@ cleanup_after_failure() {
   export TF_VAR_otel_endpoint="${OTEL_ENDPOINT:-}"
   export TF_VAR_coralogix_direct_mode="${CORALOGIX_DIRECT_MODE:-false}"
   export TF_VAR_coralogix_api_key="${CORALOGIX_API_KEY:-}"
-  export TF_VAR_coralogix_application="${CORALOGIX_APPLICATION:-azure}"
-  export TF_VAR_coralogix_subsystem="${CORALOGIX_SUBSYSTEM:-blob-storage-eventhub-e2e}"
+  export TF_VAR_coralogix_application="${CX_APP}"
+  export TF_VAR_coralogix_subsystem="${CX_SUBSYS}"
   export TF_VAR_function_app_service_plan_type="${FUNCTION_APP_SERVICE_PLAN_TYPE:-Consumption}"
   export TF_VAR_prefix_filter="${PREFIX_FILTER:-NoFilter}"
   export TF_VAR_suffix_filter="${SUFFIX_FILTER:-NoFilter}"
@@ -50,8 +54,8 @@ cd "$TERRAFORM_DIR"
 export TF_VAR_otel_endpoint="$OTEL_ENDPOINT"
 export TF_VAR_coralogix_direct_mode="${CORALOGIX_DIRECT_MODE:-false}"
 export TF_VAR_coralogix_api_key="${CORALOGIX_API_KEY:-}"
-export TF_VAR_coralogix_application="${CORALOGIX_APPLICATION:-azure}"
-export TF_VAR_coralogix_subsystem="${CORALOGIX_SUBSYSTEM:-blob-storage-eventhub-e2e}"
+export TF_VAR_coralogix_application="$CX_APP"
+export TF_VAR_coralogix_subsystem="$CX_SUBSYS"
 export TF_VAR_function_app_service_plan_type="${FUNCTION_APP_SERVICE_PLAN_TYPE:-Consumption}"
 export TF_VAR_prefix_filter="${PREFIX_FILTER:-NoFilter}"
 export TF_VAR_suffix_filter="${SUFFIX_FILTER:-NoFilter}"
@@ -80,6 +84,17 @@ STORAGE_CONNECTION_STRING=$(terraform output -raw storage_account_connection_str
 
 log "Terraform outputs: RG=$RG_NAME, Storage=$STORAGE_ACCOUNT, Container=$CONTAINER_NAME"
 
+# --- Step 1c: Sync function triggers, then wait before sending data ---
+FUNCTION_APP_NAME=$(az functionapp list --resource-group "$RG_NAME" --query "[0].name" -o tsv)
+if [[ -z "${FUNCTION_APP_NAME:-}" ]]; then
+  err "Step 1c: No function app found in resource group $RG_NAME."
+  exit 1
+fi
+log "Step 1c: Syncing function triggers..."
+az resource invoke-action -g "$RG_NAME" -n "$FUNCTION_APP_NAME" --action syncfunctiontriggers --resource-type Microsoft.Web/sites
+log "Step 1c: Waiting 15s for triggers to register..."
+sleep 15
+
 # --- Step 2: Upload test blob to trigger function ---
 log "Step 2: Uploading test blob to trigger the function..."
 TEST_BLOB_NAME="e2e-test-$(date +%s).log"
@@ -98,7 +113,6 @@ rm -f "$TEST_BLOB_FILE"
 log "Uploaded test blob: $CONTAINER_NAME/$TEST_BLOB_NAME"
 
 # --- Step 3: Verify logs in Coralogix (subsystem=blob-storage-logs from module default / e2e var) ---
-CX_SUBSYS="${CORALOGIX_SUBSYSTEM:-blob-storage-eventhub-e2e}"
 CX_API_HOST="${OTEL_ENDPOINT#*://}"
 CX_API_HOST="${CX_API_HOST%%:*}"
 CX_API_HOST="${CX_API_HOST/#ingress./api.}"
@@ -122,16 +136,17 @@ else
       --data-urlencode "date_range.fromDate=$from" \
       --data-urlencode "date_range.toDate=$to" \
       --data-urlencode "resolution=10m" \
-      --data-urlencode "filters.application=azure" \
+      --data-urlencode "filters.application=$CX_APP" \
       --data-urlencode "filters.subsystem=$CX_SUBSYS" \
       --data-urlencode "subsystem_aggregation=true" \
       -H "Authorization: Bearer $CORALOGIX_QUERY_API_KEY" | head -1 | jq -r '(.result.logsCount // []) | map(.logsCount | tonumber) | add // 0'
   }
 
-  log "Step 3: Waiting 30s, then verifying logs in Coralogix (app=azure, subsystem=$CX_SUBSYS)..."
+  log "Step 3: Waiting 30s, then verifying logs in Coralogix (app=$CX_APP, subsystem=$CX_SUBSYS)..."
   sleep 30
 
   attempt=0
+  MAX_ATTEMPTS="${MAX_ATTEMPTS:-30}"
   while true; do
     attempt=$((attempt + 1))
     count=$(fetch_logs_count)
@@ -139,11 +154,11 @@ else
       log "Step 3: Logs verified in Coralogix (count=$count)."
       break
     fi
-    if [[ $attempt -ge 10 ]]; then
-      err "Step 3: No logs received in Coralogix after 10 attempts (last count=${count:-unknown})."
+    if [[ $attempt -ge "$MAX_ATTEMPTS" ]]; then
+      err "Step 3: No logs received in Coralogix after $MAX_ATTEMPTS attempts (last count=${count:-unknown})."
       exit 1
     fi
-    log "Step 3: No logs yet (attempt $attempt/10), retrying in 30s..."
+    log "Step 3: No logs yet (attempt $attempt/$MAX_ATTEMPTS), retrying in 30s..."
     sleep 30
   done
 fi

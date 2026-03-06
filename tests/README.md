@@ -4,13 +4,17 @@ These tests validate the **terraform-coralogix-azure** modules by deploying each
 
 ## Test suites
 
-| Directory        | Module        | Trigger                    | Verification        |
-|------------------|---------------|----------------------------|---------------------|
-| `storagequeue/` | StorageQueue  | Message in storage queue   | Logs count API      |
-| `eventhub/`     | EventHub      | Event sent to Event Hub    | Logs count API      |
-| `diagnosticdata/` | DiagnosticData | Blob uploads → diagnostic → Event Hub | Data usage (metrics) API |
-| `blobstorage/`  | BlobStorage (BlobViaEventGrid) | Blob upload → Event Grid | Logs count API      |
-| `blobtootel/`    | BlobToOtel    | Blob upload → Event Grid → Event Hub | Logs count API      |
+| Directory        | Module        | Trigger                    | Verification        | Notes |
+|------------------|---------------|----------------------------|---------------------|-------|
+| `storagequeue/` | StorageQueue  | Message in storage queue   | Logs count API      | |
+| `eventhub/`     | EventHub      | Event sent to Event Hub    | Logs count API      | |
+| `diagnosticdata/` | DiagnosticData | Blob uploads → diagnostic → Event Hub | Data usage (metrics) API | ⚠️ Unstable (see below) |
+| `blobstorage/`  | BlobStorage (BlobViaEventGrid) | Blob upload → Event Grid | Logs count API      | |
+| `blobtootel/`    | BlobToOtel    | Blob upload → Event Grid → Event Hub | Logs count API      | |
+
+## DiagnosticData test stability
+
+The **diagnosticdata** E2E tests can be unstable due to the nature of Azure Diagnostics Settings writing to Blob Storage: data may take a long time to appear (up to **1 hour**) before it is picked up and sent to the Event Hub and Coralogix. Failures or timeouts in this suite are often due to this delay rather than a defect in the module.
 
 ## Prerequisites
 

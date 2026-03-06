@@ -22,7 +22,7 @@ provider "azurerm" {
 
 locals {
   name_prefix = "storagequeue-e2e"
-  location    = "eastus"
+  location    = "westeurope"
 }
 
 # Single resource group for the e2e test

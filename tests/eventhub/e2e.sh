@@ -4,6 +4,7 @@
 #
 # Order of execution:
 #   1. Deploy Terraform (RG, Event Hub namespace/hub/consumer group/auth rules, function storage, EventHub module).
+#   1c. Sync function triggers (az resource invoke-action), then wait 15s.
 #   2. Send test events to the Event Hub to trigger the function.
 #   3. Wait 30s, then poll Coralogix Get Logs Count API until count > 0.
 #   4. Clean up all resources.
@@ -26,6 +27,10 @@ TERRAFORM_DIR="${SCRIPT_DIR}/terraform"
 
 CORALOGIX_QUERY_API_KEY="${CORALOGIX_QUERY_API_KEY:-${CORALOGIX_API_KEY}}"
 
+# Application and subsystem names (keep consistent for deployment and verification)
+CX_APP="${CORALOGIX_APPLICATION:-azure}"
+CX_SUBSYS="${CORALOGIX_SUBSYSTEM:-eventhub-e2e}"
+
 # CustomDomain for EventHub module: hostname:port
 CUSTOM_DOMAIN="${OTEL_ENDPOINT#*://}"
 CUSTOM_DOMAIN="${CUSTOM_DOMAIN%%/*}"
@@ -41,8 +46,8 @@ cleanup_after_failure() {
   cd "$TERRAFORM_DIR" || return 0
   export TF_VAR_coralogix_custom_domain="${CUSTOM_DOMAIN:-}"
   export TF_VAR_coralogix_private_key="${CORALOGIX_API_KEY:-}"
-  export TF_VAR_coralogix_application="${CORALOGIX_APPLICATION:-azure}"
-  export TF_VAR_coralogix_subsystem="${CORALOGIX_SUBSYSTEM:-eventhub-e2e}"
+  export TF_VAR_coralogix_application="${CX_APP}"
+  export TF_VAR_coralogix_subsystem="${CX_SUBSYS}"
   export TF_VAR_function_app_service_plan_type="${FUNCTION_APP_SERVICE_PLAN_TYPE:-Consumption}"
   terraform destroy -input=false -auto-approve 2>/dev/null || true
 }
@@ -53,8 +58,8 @@ log "Step 1: Deploying Terraform (Event Hub + EventHub module)..."
 cd "$TERRAFORM_DIR"
 export TF_VAR_coralogix_custom_domain="$CUSTOM_DOMAIN"
 export TF_VAR_coralogix_private_key="$CORALOGIX_API_KEY"
-export TF_VAR_coralogix_application="${CORALOGIX_APPLICATION:-azure}"
-export TF_VAR_coralogix_subsystem="${CORALOGIX_SUBSYSTEM:-eventhub-e2e}"
+export TF_VAR_coralogix_application="$CX_APP"
+export TF_VAR_coralogix_subsystem="$CX_SUBSYS"
 export TF_VAR_function_app_service_plan_type="${FUNCTION_APP_SERVICE_PLAN_TYPE:-Consumption}"
 
 terraform init -input=false
@@ -82,6 +87,17 @@ EVENTHUB_CONSUMER_GROUP=$(terraform output -raw eventhub_consumer_group_name)
 EVENTHUB_SEND_CONNECTION_STRING=$(terraform output -raw eventhub_send_connection_string)
 
 log "Terraform outputs: RG=$RG_NAME, EventHub=$EVENTHUB_NAMESPACE/$EVENTHUB_NAME, ConsumerGroup=$EVENTHUB_CONSUMER_GROUP"
+
+# --- Step 1c: Sync function triggers, then wait before sending data ---
+FUNCTION_APP_NAME=$(az functionapp list --resource-group "$RG_NAME" --query "[0].name" -o tsv)
+if [[ -z "${FUNCTION_APP_NAME:-}" ]]; then
+  err "Step 1c: No function app found in resource group $RG_NAME."
+  exit 1
+fi
+log "Step 1c: Syncing function triggers..."
+az resource invoke-action -g "$RG_NAME" -n "$FUNCTION_APP_NAME" --action syncfunctiontriggers --resource-type Microsoft.Web/sites
+log "Step 1c: Waiting 15s for triggers to register..."
+sleep 15
 
 # --- Step 2: Send test events to Event Hub ---
 log "Step 2: Sending test event (JSON payload) to Event Hub..."
@@ -126,6 +142,7 @@ log "Step 3: Waiting 30s, then verifying logs in Coralogix (app=$CX_APP, subsyst
 sleep 30
 
 attempt=0
+MAX_ATTEMPTS="${MAX_ATTEMPTS:-30}"
 while true; do
   attempt=$((attempt + 1))
   count=$(fetch_logs_count)
@@ -133,11 +150,11 @@ while true; do
     log "Step 3: Logs verified in Coralogix (count=$count)."
     break
   fi
-  if [[ $attempt -ge 10 ]]; then
-    err "Step 3: No logs received in Coralogix after 10 attempts (last count=${count:-unknown})."
+  if [[ $attempt -ge "$MAX_ATTEMPTS" ]]; then
+    err "Step 3: No logs received in Coralogix after $MAX_ATTEMPTS attempts (last count=${count:-unknown})."
     exit 1
   fi
-  log "Step 3: No logs yet (attempt $attempt/10), retrying in 30s..."
+  log "Step 3: No logs yet (attempt $attempt/$MAX_ATTEMPTS), retrying in 30s..."
   sleep 30
 done
 
