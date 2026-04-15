@@ -51,6 +51,7 @@ module "eventhub" {
   # Optional: Log processing
   NewlinePattern  = var.newline_pattern
   BlockingPattern = var.blocking_pattern
+  IncludeMetadata = var.include_metadata
 }
 
 output "sync_trigger_command" {

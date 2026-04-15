@@ -26,3 +26,4 @@ eventhub_consumer_group = "$Default"
 # Optional: Log processing
 newline_pattern  = "" # e.g., "\\n" to split multi-line logs
 blocking_pattern = "" # e.g., "\\[DEBUG\\]" to filter debug logs
+include_metadata = false # Set to true to attach threadId, azure.subscription_id, azure.resource_group, azure.provider to each log

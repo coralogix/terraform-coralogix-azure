@@ -98,3 +98,9 @@ variable "blocking_pattern" {
   default     = ""
 }
 
+variable "include_metadata" {
+  description = "Optional: When true, attaches additional OTel attributes to each log record: threadId, message.index, azure.subscription_id, azure.resource_group, and azure.provider."
+  type        = bool
+  default     = false
+}
+
