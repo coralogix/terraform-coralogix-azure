@@ -1,5 +1,13 @@
 # Changelog
 
+## v2.3.0
+#### **eventhub**
+### 💡 Enhancements 💡
+- Upgrade to EventHub v3.8.0 Function App with optional metadata attributes support
+- Added `IncludeMetadata` variable (default: `false`) - When enabled, attaches additional OTel attributes per log record: `threadId`, `message.index`, `azure.subscription_id`, `azure.resource_group`, and `azure.provider`
+- `function.name` is always included regardless of the setting
+- Backwards compatible: existing deployments unaffected by default
+
 ## v2.2.0
 #### **eventhub**
 ### 💡 Enhancements 💡
