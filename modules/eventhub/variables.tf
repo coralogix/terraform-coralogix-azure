@@ -99,3 +99,9 @@ variable "CoralogixSubsystemSelector" {
   type        = string
   default     = ""
 }
+
+variable "IncludeMetadata" {
+  description = "Optional: When true, attaches additional OTel attributes to each log record: threadId, message.index, azure.subscription_id, azure.resource_group, and azure.provider. function.name is always included. Default: false."
+  type        = bool
+  default     = false
+}

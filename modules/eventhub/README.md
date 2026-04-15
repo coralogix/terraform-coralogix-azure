@@ -44,6 +44,7 @@ module "eventhub" {
   BlockingPattern = ""  # Optional: Regex to filter/block logs (e.g., "\\[DEBUG\\]")
   CoralogixApplicationSelector = ""  # Optional: Dynamic app name selector (e.g., "{{ $.category }}")
   CoralogixSubsystemSelector = ""    # Optional: Dynamic subsystem selector (e.g., "{{ $.operationName }}")
+  IncludeMetadata = false            # Optional: Attach extra OTel attributes (threadId, azure.subscription_id, etc.)
 }
 ```
 
@@ -81,6 +82,7 @@ module "eventhub" {
 | <a name="input_BlockingPattern"></a> [BlockingPattern](#input\_BlockingPattern) | Optional: Regex pattern to filter/block logs. Logs matching this pattern will not be sent to Coralogix. Example: `\\[DEBUG\\]` | `string` | `""` | no |
 | <a name="input_CoralogixApplicationSelector"></a> [CoralogixApplicationSelector](#input\_CoralogixApplicationSelector) | Optional: Dynamic application name selector. Supports template syntax `{{ $.field }}` for JSON or regex `/pattern/` for plain text. Falls back to CoralogixApplication when selector doesn't match. | `string` | `""` | no |
 | <a name="input_CoralogixSubsystemSelector"></a> [CoralogixSubsystemSelector](#input\_CoralogixSubsystemSelector) | Optional: Dynamic subsystem name selector. Supports template syntax `{{ $.field }}` for JSON or regex `/pattern/` for plain text. Falls back to CoralogixSubsystem when selector doesn't match. | `string` | `""` | no |
+| <a name="input_IncludeMetadata"></a> [IncludeMetadata](#input\_IncludeMetadata) | Optional: When true, attaches additional OTel attributes per log record: `threadId`, `message.index`, `azure.subscription_id`, `azure.resource_group`, `azure.provider`. `function.name` is always included. | `bool` | `false` | no |
 
 ## Dynamic Application and Subsystem Names
 
