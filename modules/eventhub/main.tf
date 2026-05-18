@@ -112,7 +112,7 @@ resource "azurerm_linux_function_app" "eventhub-function" {
     BLOCKING_PATTERN               = var.BlockingPattern
     INCLUDE_METADATA               = tostring(var.IncludeMetadata)
     # Function App Source code - https://github.com/coralogix/coralogix-azure-serverless/tree/master/EventHub
-    WEBSITE_RUN_FROM_PACKAGE = "https://github.com/coralogix/coralogix-azure-serverless/releases/download/EventHub-v3.8.0/EventHub-FunctionApp.zip"
+    WEBSITE_RUN_FROM_PACKAGE       = "https://github.com/coralogix/coralogix-azure-serverless/releases/download/EventHub-v3.8.1/EventHub-FunctionApp.zip"
   }
 }
 
