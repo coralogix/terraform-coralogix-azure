@@ -128,7 +128,7 @@ resource "azurerm_linux_function_app" "blobtootel-function" {
     WEBSITE_CONTENTSHARE                     = lower(local.function_name)
     FUNCTIONS_EXTENSION_VERSION              = "~4"
     FUNCTIONS_WORKER_RUNTIME                 = "node"
-    WEBSITE_RUN_FROM_PACKAGE                 = "https://coralogix-public.s3.eu-west-1.amazonaws.com/azure-functions-repo/BlobToOtel.zip"
+    WEBSITE_RUN_FROM_PACKAGE                 = "https://github.com/coralogix/coralogix-azure-serverless/releases/download/BlobToOtel-v3.1.0/BlobToOtel-FunctionApp.zip"
   }
 }
 
