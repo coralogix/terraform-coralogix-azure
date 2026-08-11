@@ -1,5 +1,13 @@
 # Changelog
 
+## v2.4.0
+#### **blobstorage**, **diagnosticdata**, **storagequeue**
+### 💡 Enhancements 💡
+- Updated the Coralogix ingress endpoints to the new regional domains (`coralogix.com` → `eu1.coralogix.com`, `coralogix.in` → `ap1.coralogix.com`, `coralogixsg.com` → `ap2.coralogix.com`, `coralogix.us` → `us1.coralogix.com`, `cx498.coralogix.com` → `us2.coralogix.com`)
+- Added the new region names `EU1`, `EU2`, `US1`, `US2`, `AP1`, `AP2`, `AP3` to `CoralogixRegion` in **diagnosticdata** and **storagequeue**, aligning them with **eventhub**
+- Added support for the `AP3` (Jakarta) region in **diagnosticdata** and **storagequeue**
+- The legacy region names `Europe`, `Europe2`, `India`, `Singapore`, `US` and `US2` remain accepted and now resolve to the new domains, so existing configurations continue to work unchanged
+
 ## v2.3.0
 #### **eventhub**
 ### 💡 Enhancements 💡

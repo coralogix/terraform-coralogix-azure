@@ -1,13 +1,23 @@
 locals {
   function_name = join("-", ["DiagnosticData", random_string.this.result])
   coralogix_regions = {
-    Europe    = "ingress.coralogix.com"
+    EU1 = "ingress.eu1.coralogix.com"
+    EU2 = "ingress.eu2.coralogix.com"
+    US1 = "ingress.us1.coralogix.com"
+    US2 = "ingress.us2.coralogix.com"
+    AP1 = "ingress.ap1.coralogix.com"
+    AP2 = "ingress.ap2.coralogix.com"
+    AP3 = "ingress.ap3.coralogix.com"
+
+    # Legacy region names, retained so existing configurations keep working. US2 is
+    # shared with the list above, so it is not repeated here.
+    Europe    = "ingress.eu1.coralogix.com"
     Europe2   = "ingress.eu2.coralogix.com"
-    India     = "ingress.coralogix.in"
-    Singapore = "ingress.coralogixsg.com"
-    US        = "ingress.coralogix.us"
-    US2       = "ingress.cx498.coralogix.com"
-    Custom    = var.CustomDomain
+    India     = "ingress.ap1.coralogix.com"
+    Singapore = "ingress.ap2.coralogix.com"
+    US        = "ingress.us1.coralogix.com"
+
+    Custom = var.CustomDomain
   }
   sku = var.FunctionAppServicePlanType == "Consumption" ? "Y1" : "EP1"
 }
