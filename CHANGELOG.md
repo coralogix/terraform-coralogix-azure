@@ -7,7 +7,8 @@
 - Added the new region names `EU1`, `EU2`, `US1`, `US2`, `US3`, `AP1`, `AP2`, `AP3` to `CoralogixRegion` in **diagnosticdata** and **storagequeue**, aligning them with **eventhub**
 - Added support for the `US3` region across **blobstorage**, **diagnosticdata**, **eventhub** and **storagequeue**
 - Added support for the `AP3` region in **diagnosticdata** and **storagequeue**
-- The legacy region names `Europe`, `Europe2`, `India`, `Singapore`, `US` and `US2` remain accepted in **diagnosticdata** and **storagequeue**, and now resolve to the new domains, so existing configurations continue to work unchanged
+- The legacy region names `Europe`, `Europe2`, `India`, `Singapore`, `US` and `US2` are accepted by **diagnosticdata**, **eventhub** and **storagequeue**, and resolve to the new domains, so existing configurations continue to work unchanged
+- Restored the legacy region names in **eventhub**, which had dropped them in v2.0.0, so all three modules now accept both the current and the legacy naming
 
 ## v2.3.0
 #### **eventhub**

@@ -1,14 +1,23 @@
 locals {
   function_name = var.FunctionAppName != "" ? var.FunctionAppName : "coralogix-eventhub-func-${random_string.this.result}"
   coralogix_regions = {
-    EU1    = "ingress.eu1.coralogix.com:443"
-    EU2    = "ingress.eu2.coralogix.com:443"
-    US1    = "ingress.us1.coralogix.com:443"
-    US2    = "ingress.us2.coralogix.com:443"
-    US3    = "ingress.us3.coralogix.com:443"
-    AP1    = "ingress.ap1.coralogix.com:443"
-    AP2    = "ingress.ap2.coralogix.com:443"
-    AP3    = "ingress.ap3.coralogix.com:443"
+    EU1 = "ingress.eu1.coralogix.com:443"
+    EU2 = "ingress.eu2.coralogix.com:443"
+    US1 = "ingress.us1.coralogix.com:443"
+    US2 = "ingress.us2.coralogix.com:443"
+    US3 = "ingress.us3.coralogix.com:443"
+    AP1 = "ingress.ap1.coralogix.com:443"
+    AP2 = "ingress.ap2.coralogix.com:443"
+    AP3 = "ingress.ap3.coralogix.com:443"
+
+    # Legacy region names, retained so existing configurations keep working. US2 is
+    # shared with the list above, so it is not repeated here.
+    Europe    = "ingress.eu1.coralogix.com:443"
+    Europe2   = "ingress.eu2.coralogix.com:443"
+    India     = "ingress.ap1.coralogix.com:443"
+    Singapore = "ingress.ap2.coralogix.com:443"
+    US        = "ingress.us1.coralogix.com:443"
+
     Custom = var.CustomDomain
   }
   sku = var.FunctionAppServicePlanType == "Consumption" ? "Y1" : "EP1"
