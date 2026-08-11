@@ -65,7 +65,7 @@ module "eventhub" {
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_CoralogixRegion"></a> [CoralogixRegion](#input\_CoralogixRegion) | The Coralogix location region, possible options are [`EU1`, `EU2`, `US1`, `US2`, `US3`, `AP1`, `AP2`, `AP3`]. The legacy names [`Europe`, `Europe2`, `India`, `Singapore`, `US`, `US2`] are still accepted. | `string` | n/a | yes |
+| <a name="input_CoralogixRegion"></a> [CoralogixRegion](#input\_CoralogixRegion) | The Coralogix location region, possible options are [`EU1`, `EU2`, `US1`, `US2`, `US3`, `AP1`, `AP2`, `AP3`] | `string` | n/a | yes |
 | <a name="input_CustomDomain"></a> [CustomDomain](#input\_CustomDomain) | Your Custom OTLP endpoint for the Coralogix account. Format: hostname:port | `string` | `ingress.customsubdomain.coralogix.com:443` | no |
 | <a name="input_CoralogixPrivateKey"></a> [CoralogixPrivateKey](#input\_CoralogixPrivateKey) | The Coralogix private key which is used to validate your authenticity | `string` | n/a | yes |
 | <a name="input_CoralogixApplication"></a> [CoralogixApplication](#input\_CoralogixApplication) | The name of your application. Supports dynamic extraction using templates `{{ $.field }}` or regex `/pattern/` | `string` | n/a | yes |
@@ -136,16 +136,3 @@ When a selector doesn't match, the function follows this fallback chain:
 | `AP1` | Mumbai | ingress.ap1.coralogix.com:443 |
 | `AP2` | Singapore | ingress.ap2.coralogix.com:443 |
 | `AP3` | Jakarta | ingress.ap3.coralogix.com:443 |
-
-### Legacy region names
-
-The names below are deprecated but still accepted, so existing configurations keep working. New configurations should use the names above.
-
-| Legacy name | Use instead |
-|------|------------|
-| `Europe` | `EU1` |
-| `Europe2` | `EU2` |
-| `India` | `AP1` |
-| `Singapore` | `AP2` |
-| `US` | `US1` |
-| `US2` | `US2` (unchanged) |
