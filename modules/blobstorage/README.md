@@ -75,9 +75,11 @@ module "bloblstorage" {
 ## Coralogix regions (for OtelEndpoint)
 | Coralogix region | Example OtelEndpoint |
 |------|------------|
-| Europe | `https://ingress.coralogix.com` |
-| Europe2 | `https://ingress.eu2.coralogix.com` |
-| India | `https://ingress.coralogix.in` |
-| Singapore | `https://ingress.coralogixsg.com` |
-| US | `https://ingress.coralogix.us` |
-| US2 | `https://ingress.cx498.coralogix.com` |
+| EU1 | `https://ingress.eu1.coralogix.com` |
+| EU2 | `https://ingress.eu2.coralogix.com` |
+| US1 | `https://ingress.us1.coralogix.com` |
+| US2 | `https://ingress.us2.coralogix.com` |
+| US3 | `https://ingress.us3.coralogix.com` |
+| AP1 | `https://ingress.ap1.coralogix.com` |
+| AP2 | `https://ingress.ap2.coralogix.com` |
+| AP3 | `https://ingress.ap3.coralogix.com` |

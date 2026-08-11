@@ -29,7 +29,7 @@ provider "azurerm" {
 module "DiagnosticData" {
   source = "coralogix/azure/coralogix//modules/DiagnosticData"
 
-  CoralogixRegion = "Europe"
+  CoralogixRegion = "EU1"
   CustomDomain = < Custom FQDN if applicable >
   CoralogixPrivateKey = < Private Key >
   CoralogixApplication = "Azure"
@@ -60,7 +60,7 @@ module "DiagnosticData" {
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_CoralogixRegion"></a> [CoralogixRegion](#input\_CoralogixRegion) | The Coralogix location region, possible options are [`Europe`, `Europe2`, `India`, `Singapore`, `US`, `US2`] | `string` | `Europe` | no |
+| <a name="input_CoralogixRegion"></a> [CoralogixRegion](#input\_CoralogixRegion) | The Coralogix location region, possible options are [`EU1`, `EU2`, `US1`, `US2`, `US3`, `AP1`, `AP2`, `AP3`]. The legacy names [`Europe`, `Europe2`, `India`, `Singapore`, `US`, `US2`] are still accepted. | `string` | n/a | yes |
 | <a name="input_CustomDomain"></a> [CustomDomain](#input\_CustomDomain) | Your Custom URL for the Coralogix account. Ignore unless you have a custom URL. Just the FQDN, not the whole URL. | `string` | n/a | no |
 | <a name="input_CoralogixPrivateKey"></a> [CoralogixPrivateKey](#input\_CoralogixPrivateKey) | The Coralogix private key which is used to validate your authenticity | `string` | n/a | yes |
 | <a name="input_CoralogixApplication"></a> [CoralogixApplication](#input\_CoralogixApplication) | The name of your application | `string` | n/a | yes |
@@ -72,12 +72,27 @@ module "DiagnosticData" {
 | <a name="input_EventhubNamespace"></a> [EventhubNamespace](#input\_EventhubNamespace) | The name of the EventHub Namespace | `string` | n/a | yes |
 | <a name="input_EventhubResourceGroupName"></a> [EventhubResourceGroupName](#input\_EventhubResourceGroupName) | The name of the resource group that the eventhub belong to. | `string` | n/a | yes |
 
-## Coralgoix regions
-| Coralogix region | AWS Region | Coralogix Domain |
+## Coralogix regions
+| Coralogix region | Cloud Region | Coralogix Domain |
 |------|------------|------------|
-| `Europe` |  `eu-west-1` | coralogix.com |
-| `Europe2` |  `eu-north-1` | eu2.coralogix.com |
-| `India` | `ap-south-1`  | coralogix.in |
-| `Singapore` | `ap-southeast-1` | coralogixsg.com |
-| `US` | `us-east-2` | coralogix.us |
-| `US2` | `us-west-2` | cx498.coralogix.com |
+| `EU1` | AWS `eu-west-1` | eu1.coralogix.com |
+| `EU2` | AWS `eu-north-1` | eu2.coralogix.com |
+| `US1` | AWS `us-east-2` | us1.coralogix.com |
+| `US2` | AWS `us-west-2` | us2.coralogix.com |
+| `US3` | GCP `us-central1` | us3.coralogix.com |
+| `AP1` | AWS `ap-south-1` | ap1.coralogix.com |
+| `AP2` | AWS `ap-southeast-1` | ap2.coralogix.com |
+| `AP3` | AWS `ap-southeast-3` | ap3.coralogix.com |
+
+### Legacy region names
+
+The names below are deprecated but still accepted, so existing configurations keep working. New configurations should use the names above.
+
+| Legacy name | Use instead |
+|------|------------|
+| `Europe` | `EU1` |
+| `Europe2` | `EU2` |
+| `India` | `AP1` |
+| `Singapore` | `AP2` |
+| `US` | `US1` |
+| `US2` | `US2` (unchanged) |
