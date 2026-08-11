@@ -65,7 +65,7 @@ module "eventhub" {
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_CoralogixRegion"></a> [CoralogixRegion](#input\_CoralogixRegion) | The Coralogix location region: EU1 (Ireland), EU2 (Stockholm), US1 (Ohio), US2 (Oregon), AP1 (Mumbai), AP2 (Singapore), AP3 (Jakarta) | `string` | n/a | yes |
+| <a name="input_CoralogixRegion"></a> [CoralogixRegion](#input\_CoralogixRegion) | The Coralogix location region, possible options are [`EU1`, `EU2`, `US1`, `US2`, `US3`, `AP1`, `AP2`, `AP3`] | `string` | n/a | yes |
 | <a name="input_CustomDomain"></a> [CustomDomain](#input\_CustomDomain) | Your Custom OTLP endpoint for the Coralogix account. Format: hostname:port | `string` | `ingress.customsubdomain.coralogix.com:443` | no |
 | <a name="input_CoralogixPrivateKey"></a> [CoralogixPrivateKey](#input\_CoralogixPrivateKey) | The Coralogix private key which is used to validate your authenticity | `string` | n/a | yes |
 | <a name="input_CoralogixApplication"></a> [CoralogixApplication](#input\_CoralogixApplication) | The name of your application. Supports dynamic extraction using templates `{{ $.field }}` or regex `/pattern/` | `string` | n/a | yes |
@@ -126,12 +126,13 @@ When a selector doesn't match, the function follows this fallback chain:
 3. **Default** (`coralogix-azure-eventhub` / `azure`) - Built-in defaults
 
 ## Coralogix regions
-| Coralogix region | Azure Region | Coralogix OTLP Endpoint |
+| Coralogix region | Location | Coralogix OTLP Endpoint |
 |------|------------|------------|
 | `EU1` | Ireland | ingress.eu1.coralogix.com:443 |
 | `EU2` | Stockholm | ingress.eu2.coralogix.com:443 |
 | `US1` | Ohio | ingress.us1.coralogix.com:443 |
 | `US2` | Oregon | ingress.us2.coralogix.com:443 |
+| `US3` | Iowa | ingress.us3.coralogix.com:443 |
 | `AP1` | Mumbai | ingress.ap1.coralogix.com:443 |
 | `AP2` | Singapore | ingress.ap2.coralogix.com:443 |
 | `AP3` | Jakarta | ingress.ap3.coralogix.com:443 |

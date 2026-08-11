@@ -79,6 +79,7 @@ module "bloblstorage" {
 | EU2 | `https://ingress.eu2.coralogix.com` |
 | US1 | `https://ingress.us1.coralogix.com` |
 | US2 | `https://ingress.us2.coralogix.com` |
+| US3 | `https://ingress.us3.coralogix.com` |
 | AP1 | `https://ingress.ap1.coralogix.com` |
 | AP2 | `https://ingress.ap2.coralogix.com` |
 | AP3 | `https://ingress.ap3.coralogix.com` |

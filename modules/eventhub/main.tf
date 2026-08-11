@@ -5,6 +5,7 @@ locals {
     EU2    = "ingress.eu2.coralogix.com:443"
     US1    = "ingress.us1.coralogix.com:443"
     US2    = "ingress.us2.coralogix.com:443"
+    US3    = "ingress.us3.coralogix.com:443"
     AP1    = "ingress.ap1.coralogix.com:443"
     AP2    = "ingress.ap2.coralogix.com:443"
     AP3    = "ingress.ap3.coralogix.com:443"
@@ -112,7 +113,7 @@ resource "azurerm_linux_function_app" "eventhub-function" {
     BLOCKING_PATTERN               = var.BlockingPattern
     INCLUDE_METADATA               = tostring(var.IncludeMetadata)
     # Function App Source code - https://github.com/coralogix/coralogix-azure-serverless/tree/master/EventHub
-    WEBSITE_RUN_FROM_PACKAGE       = "https://github.com/coralogix/coralogix-azure-serverless/releases/download/EventHub-v3.8.1/EventHub-FunctionApp.zip"
+    WEBSITE_RUN_FROM_PACKAGE = "https://github.com/coralogix/coralogix-azure-serverless/releases/download/EventHub-v3.8.1/EventHub-FunctionApp.zip"
   }
 }
 
