@@ -1,6 +1,20 @@
 name: E2E Tests
 
 on:
+  workflow_dispatch:
+    inputs:
+      package:
+        description: "Package to test (all = every package)"
+        required: true
+        default: "all"
+        type: choice
+        options:
+          - all
+          - storagequeue
+          - eventhub
+          - diagnosticdata
+          - blobstorage
+          - blobtootel
   workflow_run:
     workflows:
       - Release Modules
@@ -51,10 +65,20 @@ jobs:
 
       - name: Set packages matrix
         id: set-packages
+        env:
+          EVENT: ${{ github.event_name }}
+          INPUT_PACKAGE: ${{ github.event.inputs.package }}
         run: |
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" || "${{ github.event_name }}" == "workflow_run" ]]; then
-            echo 'packages=["storagequeue","eventhub","diagnosticdata","blobstorage","blobtootel"]' >> $GITHUB_OUTPUT
-            echo 'has-changes=true' >> $GITHUB_OUTPUT
+          if [[ "$EVENT" == "workflow_dispatch" ]]; then
+            if [[ -n "${INPUT_PACKAGE:-}" && "$INPUT_PACKAGE" != "all" ]]; then
+              echo "packages=[\"$INPUT_PACKAGE\"]" >> "$GITHUB_OUTPUT"
+            else
+              echo 'packages=["storagequeue","eventhub","diagnosticdata","blobstorage","blobtootel"]' >> "$GITHUB_OUTPUT"
+            fi
+            echo 'has-changes=true' >> "$GITHUB_OUTPUT"
+          elif [[ "$EVENT" == "workflow_run" ]]; then
+            echo 'packages=["storagequeue","eventhub","diagnosticdata","blobstorage","blobtootel"]' >> "$GITHUB_OUTPUT"
+            echo 'has-changes=true' >> "$GITHUB_OUTPUT"
           else
             packages='${{ steps.changes.outputs.changes }}'
             echo "packages=$packages" >> $GITHUB_OUTPUT
@@ -93,8 +117,6 @@ jobs:
           client-id: ${{ secrets.AZURE_CLIENT_ID }}
           tenant-id: ${{ secrets.AZURE_TENANT_ID }}
           subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
-        env:
-          AZURE_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
 
       - name: Run E2E test
         working-directory: ./tests/${{ matrix.package }}
