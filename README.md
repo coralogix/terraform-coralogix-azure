@@ -11,13 +11,21 @@ terraform {
       source = "hashicorp/azurerm"
       version = "~> 3.93"
     }
+    azapi = {
+      source = "Azure/azapi"
+      version = "~> 2.0"
+    }
   }
 }
 
 provider "azurerm" {
   features {}
 }
+
+provider "azapi" {}
 ```
+
+> `eventhub` and `blobtootel` require the `azapi` provider in addition to `azurerm` (used to apply `WEBSITE_RUN_FROM_PACKAGE` after the function app is created, since Linux Consumption rejects it at create time).
 
 `eventhub`:
 
