@@ -19,12 +19,18 @@ terraform {
       source = "hashicorp/azurerm"
       version = "~> 3.93"
     }
+    azapi = {
+      source = "Azure/azapi"
+      version = "~> 2.0"
+    }
   }
 }
 
 provider "azurerm" {
   features {}
 }
+
+provider "azapi" {}
 
 # Standard version without vNet integration
 module "blobtootel-standard" {

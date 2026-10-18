@@ -12,6 +12,8 @@ locals {
     Custom = var.CustomDomain
   }
   sku = var.FunctionAppServicePlanType == "Consumption" ? "Y1" : "EP1"
+  # Function App Source code - https://github.com/coralogix/coralogix-azure-serverless/tree/master/EventHub
+  package_uri = "https://github.com/coralogix/coralogix-azure-serverless/releases/download/EventHub-v3.8.4/EventHub-FunctionApp.zip"
 }
 
 resource "random_string" "this" {
@@ -112,9 +114,30 @@ resource "azurerm_linux_function_app" "eventhub-function" {
     NEWLINE_PATTERN                = var.NewlinePattern
     BLOCKING_PATTERN               = var.BlockingPattern
     INCLUDE_METADATA               = tostring(var.IncludeMetadata)
-    # Function App Source code - https://github.com/coralogix/coralogix-azure-serverless/tree/master/EventHub
-    WEBSITE_RUN_FROM_PACKAGE = "https://github.com/coralogix/coralogix-azure-serverless/releases/download/EventHub-v3.8.1/EventHub-FunctionApp.zip"
   }
+
+  # WEBSITE_RUN_FROM_PACKAGE is applied after creation by azapi_update_resource.eventhub-package-uri
+  # below, so ignore drift from that out-of-band write.
+  lifecycle {
+    ignore_changes = [app_settings["WEBSITE_RUN_FROM_PACKAGE"]]
+  }
+}
+
+# Linux Consumption refuses to *create* a function app when WEBSITE_RUN_FROM_PACKAGE points at a URL
+# that redirects, and GitHub release assets 302 to a signed host, so it cannot be part of the
+# create-time app_settings above. Setting it here, after the site exists, works because the
+# runtime fetch follows the redirect normally. See coralogix-azure-serverless EventHub CHANGELOG 3.8.4.
+resource "azapi_update_resource" "eventhub-package-uri" {
+  type        = "Microsoft.Web/sites/config@2022-03-01"
+  resource_id = "${azurerm_linux_function_app.eventhub-function.id}/config/appsettings"
+
+  body = {
+    properties = {
+      WEBSITE_RUN_FROM_PACKAGE = local.package_uri
+    }
+  }
+
+  depends_on = [azurerm_linux_function_app.eventhub-function]
 }
 
 # ------------------------------------------------ Output ------------------------------------------------
