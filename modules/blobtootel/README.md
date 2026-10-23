@@ -17,7 +17,7 @@ terraform {
   required_providers {
     azurerm = {
       source = "hashicorp/azurerm"
-      version = "~> 3.93"
+      version = "~> 4.0"
     }
   }
 }
@@ -68,7 +68,7 @@ module "blobtootel-vnet" {
 
 | Name | Version |
 |------|---------|
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | >= 3.93 |
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | >= 4.0 |
 | <a name="provider_random"></a> [random](#provider\_random) | >= 3.4.3 |
 
 ## Inputs

@@ -1,5 +1,12 @@
 # Changelog
 
+## v3.0.0
+#### **blobtootel**
+### ⚠️ Breaking Change ⚠️
+- The module now requires the `azurerm` provider `~> 4.0` (was `~> 3.93`), because azurerm 3.x does not accept Node.js 22 for Linux function apps. Update the `azurerm` constraint in your root configuration, aligning it with the **eventhub** module
+### 🐛 Bug Fixes 🐛
+- Run the function app on Node.js 22 instead of 20. Node.js uses its own bundled CA store, and Node.js 20 is end-of-life with no release that distrusts the compromised eMudhra intermediates (CVE-2026-111943); the fix ships in Node.js 22.23.4+. The BlobToOtel function package already requires Node.js >= 22
+
 ## v2.4.0
 #### **blobstorage**, **diagnosticdata**, **eventhub**, **storagequeue**
 ### 💡 Enhancements 💡
