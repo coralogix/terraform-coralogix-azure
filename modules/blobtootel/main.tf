@@ -107,7 +107,7 @@ resource "azurerm_linux_function_app" "blobtootel-function" {
   virtual_network_subnet_id   = var.FunctionAppServicePlanType == "Premium" ? data.azurerm_subnet.function_subnet[0].id : null
   site_config {
     application_stack {
-      node_version = 20
+      node_version = 22
     }
   }
   app_settings = {
