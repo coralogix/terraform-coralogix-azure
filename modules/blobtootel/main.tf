@@ -3,7 +3,7 @@ locals {
   storage_name  = lower(substr(replace(join("", ["fn", var.BlobContainerStorageAccount, random_string.this.result]), "-", ""), 0, 24))
   sku           = var.FunctionAppServicePlanType == "Consumption" ? "Y1" : "EP1"
   # Function App Source code - https://github.com/coralogix/coralogix-azure-serverless/tree/master/BlobToOtel
-  package_uri = "https://github.com/coralogix/coralogix-azure-serverless/releases/download/BlobToOtel-v3.1.1/BlobToOtel-FunctionApp.zip"
+  package_uri = "https://github.com/coralogix/coralogix-azure-serverless/releases/download/BlobToOtel-v3.1.2/BlobToOtel-FunctionApp.zip"
 }
 
 resource "random_string" "this" {

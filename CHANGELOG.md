@@ -7,8 +7,9 @@
 ### 🐛 Bug Fixes 🐛
 - Fixed `WEBSITE_RUN_FROM_PACKAGE` failing to apply when the function app is created on a Linux Consumption plan, because the pinned package URL redirects (GitHub release assets 302 to a signed host) and Azure refuses app creation when this setting points at a redirecting URL. It is now applied after the function app exists via `azapi_update_resource`, mirroring the equivalent fix already shipped in `coralogix-azure-serverless`'s EventHub ARM template (v3.8.4)
 ### 💡 Enhancements 💡
-- Bumped **eventhub** function package to v3.8.4
-- Bumped **blobtootel** function package to v3.1.1
+- Bumped **eventhub** function package to v3.8.6: failed exports to Coralogix are no longer dropped silently. A failed export fails the invocation and the Event Hub retry policy holds the checkpoint until delivery succeeds
+- Bumped **blobtootel** function package to v3.1.2
+- New optional **eventhub** variables `OtelLogLevel` (default `"warn"`) and `MaxInFlightExports` (default `64`), matching the ARM template parameters added in EventHub v3.8.6
 
 ## v2.4.0
 #### **blobstorage**, **diagnosticdata**, **eventhub**, **storagequeue**

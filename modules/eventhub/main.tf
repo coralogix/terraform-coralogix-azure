@@ -13,7 +13,7 @@ locals {
   }
   sku = var.FunctionAppServicePlanType == "Consumption" ? "Y1" : "EP1"
   # Function App Source code - https://github.com/coralogix/coralogix-azure-serverless/tree/master/EventHub
-  package_uri = "https://github.com/coralogix/coralogix-azure-serverless/releases/download/EventHub-v3.8.4/EventHub-FunctionApp.zip"
+  package_uri = "https://github.com/coralogix/coralogix-azure-serverless/releases/download/EventHub-v3.8.6/EventHub-FunctionApp.zip"
 }
 
 resource "random_string" "this" {
@@ -114,6 +114,8 @@ resource "azurerm_linux_function_app" "eventhub-function" {
     NEWLINE_PATTERN                = var.NewlinePattern
     BLOCKING_PATTERN               = var.BlockingPattern
     INCLUDE_METADATA               = tostring(var.IncludeMetadata)
+    OTEL_LOG_LEVEL                 = var.OtelLogLevel
+    MAX_IN_FLIGHT_EXPORTS          = tostring(var.MaxInFlightExports)
   }
 
   # WEBSITE_RUN_FROM_PACKAGE is applied after creation by azapi_update_resource.eventhub-package-uri
