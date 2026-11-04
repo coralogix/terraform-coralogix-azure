@@ -17,12 +17,18 @@ terraform {
       source = "hashicorp/azurerm"
       version = "~> 4.0"
     }
+    azapi = {
+      source = "Azure/azapi"
+      version = "~> 2.3"
+    }
   }
 }
 
 provider "azurerm" {
   features {}
 }
+
+provider "azapi" {}
 
 module "eventhub" {
   source = "coralogix/azure/coralogix//modules/eventhub"
@@ -45,6 +51,8 @@ module "eventhub" {
   CoralogixApplicationSelector = ""  # Optional: Dynamic app name selector (e.g., "{{ $.category }}")
   CoralogixSubsystemSelector = ""    # Optional: Dynamic subsystem selector (e.g., "{{ $.operationName }}")
   IncludeMetadata = false            # Optional: Attach extra OTel attributes (threadId, azure.subscription_id, etc.)
+  OtelLogLevel = "warn"              # Optional: OpenTelemetry diagnostic log level (none, error, warn, info, debug, verbose)
+  MaxInFlightExports = 64            # Optional: Export requests in flight per worker process (1-1024)
 }
 ```
 
@@ -83,6 +91,8 @@ module "eventhub" {
 | <a name="input_CoralogixApplicationSelector"></a> [CoralogixApplicationSelector](#input\_CoralogixApplicationSelector) | Optional: Dynamic application name selector. Supports template syntax `{{ $.field }}` for JSON or regex `/pattern/` for plain text. Falls back to CoralogixApplication when selector doesn't match. | `string` | `""` | no |
 | <a name="input_CoralogixSubsystemSelector"></a> [CoralogixSubsystemSelector](#input\_CoralogixSubsystemSelector) | Optional: Dynamic subsystem name selector. Supports template syntax `{{ $.field }}` for JSON or regex `/pattern/` for plain text. Falls back to CoralogixSubsystem when selector doesn't match. | `string` | `""` | no |
 | <a name="input_IncludeMetadata"></a> [IncludeMetadata](#input\_IncludeMetadata) | Optional: When true, attaches additional OTel attributes per log record: `threadId`, `message.index`, `azure.subscription_id`, `azure.resource_group`, `azure.provider`. `function.name` is always included. | `bool` | `false` | no |
+| <a name="input_OtelLogLevel"></a> [OtelLogLevel](#input\_OtelLogLevel) | Optional: Level of OpenTelemetry diagnostic messages written to the function logs: `none`, `error`, `warn`, `info`, `debug` or `verbose`. The default includes warnings for records Coralogix rejects in a partial-success response. Failed exports are always logged as errors. | `string` | `"warn"` | no |
+| <a name="input_MaxInFlightExports"></a> [MaxInFlightExports](#input\_MaxInFlightExports) | Optional: Maximum number of export requests to Coralogix in flight at once, per Node worker process (1-1024). The default keeps memory within the Consumption plan limit; raise it only with enough memory (e.g. Premium) and after load testing. | `number` | `64` | no |
 
 ## Dynamic Application and Subsystem Names
 

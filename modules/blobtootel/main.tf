@@ -2,6 +2,8 @@ locals {
   function_name = join("-", ["BlobToOtel", substr(var.BlobContainerStorageAccount, 0, 27), random_string.this.result])
   storage_name  = lower(substr(replace(join("", ["fn", var.BlobContainerStorageAccount, random_string.this.result]), "-", ""), 0, 24))
   sku           = var.FunctionAppServicePlanType == "Consumption" ? "Y1" : "EP1"
+  # Function App Source code - https://github.com/coralogix/coralogix-azure-serverless/tree/master/BlobToOtel
+  package_uri = "https://github.com/coralogix/coralogix-azure-serverless/releases/download/BlobToOtel-v3.1.2/BlobToOtel-FunctionApp.zip"
 }
 
 resource "random_string" "this" {
@@ -117,6 +119,7 @@ resource "azurerm_linux_function_app" "blobtootel-function" {
     CORALOGIX_APPLICATION                    = var.CoralogixApplication
     CORALOGIX_SUBSYSTEM                      = var.CoralogixSubsystem
     EVENT_HUB_NAME                           = var.EventHubName
+    EVENT_HUB_CONSUMER_GROUP                 = azurerm_eventhub_consumer_group.eventhub-consumergroup.name
     NEWLINE_PATTERN                          = var.NewlinePattern
     PREFIX_FILTER                            = var.PrefixFilter
     SUFFIX_FILTER                            = var.SuffixFilter
@@ -128,8 +131,45 @@ resource "azurerm_linux_function_app" "blobtootel-function" {
     WEBSITE_CONTENTSHARE                     = lower(local.function_name)
     FUNCTIONS_EXTENSION_VERSION              = "~4"
     FUNCTIONS_WORKER_RUNTIME                 = "node"
-    WEBSITE_RUN_FROM_PACKAGE                 = "https://github.com/coralogix/coralogix-azure-serverless/releases/download/BlobToOtel-v3.1.0/BlobToOtel-FunctionApp.zip"
   }
+
+  # WEBSITE_RUN_FROM_PACKAGE is applied after creation by azapi_update_resource.blobtootel-package-uri
+  # below, so ignore drift from that out-of-band write.
+  lifecycle {
+    ignore_changes = [app_settings["WEBSITE_RUN_FROM_PACKAGE"]]
+  }
+}
+
+# Linux Consumption refuses to *create* a function app when WEBSITE_RUN_FROM_PACKAGE points at a URL
+# that redirects, and GitHub release assets 302 to a signed host, so it cannot be part of the
+# create-time app_settings above. Setting it here, after the site exists, works because the
+# runtime fetch follows the redirect normally. See coralogix-azure-serverless EventHub CHANGELOG 3.8.4
+# for the equivalent ARM-template fix this mirrors.
+# The appsettings endpoint replaces the *whole* settings collection on write, and its GET does
+# not return setting values, so the write must carry every existing setting. Read them with
+# the list action (which does return values) and merge the package URL into them.
+data "azapi_resource_action" "blobtootel-appsettings" {
+  type                             = "Microsoft.Web/sites/config@2022-03-01"
+  resource_id                      = "${azurerm_linux_function_app.blobtootel-function.id}/config/appsettings"
+  action                           = "list"
+  method                           = "POST"
+  sensitive_response_export_values = ["properties"]
+
+  depends_on = [azurerm_linux_function_app.blobtootel-function]
+}
+
+resource "azapi_update_resource" "blobtootel-package-uri" {
+  type        = "Microsoft.Web/sites/config@2022-03-01"
+  resource_id = "${azurerm_linux_function_app.blobtootel-function.id}/config/appsettings"
+
+  body = {
+    properties = merge(
+      data.azapi_resource_action.blobtootel-appsettings.sensitive_output.properties,
+      { WEBSITE_RUN_FROM_PACKAGE = local.package_uri }
+    )
+  }
+
+  depends_on = [azurerm_linux_function_app.blobtootel-function]
 }
 
 # ------------------------------------------------ Output ------------------------------------------------

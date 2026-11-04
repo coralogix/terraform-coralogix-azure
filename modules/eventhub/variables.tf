@@ -105,3 +105,23 @@ variable "IncludeMetadata" {
   type        = bool
   default     = false
 }
+
+variable "OtelLogLevel" {
+  description = "Optional: Level of OpenTelemetry diagnostic messages written to the function logs: none, error, warn, info, debug or verbose. The default, warn, includes warnings for records that Coralogix rejects in a partial-success response. Failed exports are always logged as errors."
+  type        = string
+  default     = "warn"
+  validation {
+    condition     = contains(["none", "error", "warn", "info", "debug", "verbose"], var.OtelLogLevel)
+    error_message = "OtelLogLevel must be one of: none, error, warn, info, debug, verbose."
+  }
+}
+
+variable "MaxInFlightExports" {
+  description = "Optional: Maximum number of export requests to Coralogix in flight at once, per Node worker process. The default (64) keeps memory within the Consumption plan limit; raise it only with enough memory (e.g. Premium) and after load testing."
+  type        = number
+  default     = 64
+  validation {
+    condition     = var.MaxInFlightExports == floor(var.MaxInFlightExports) && var.MaxInFlightExports >= 1 && var.MaxInFlightExports <= 1024
+    error_message = "MaxInFlightExports must be a whole number from 1 to 1024."
+  }
+}

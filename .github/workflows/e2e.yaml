@@ -1,4 +1,4 @@
-name: E2E Tests
+name: Terraform Module E2E Tests
 
 on:
   workflow_dispatch:
@@ -135,7 +135,7 @@ jobs:
           webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
           webhook-type: incoming-webhook
           payload: |
-            text: "${{ job.status == 'success' && format('*{0}* - Azure e2e passed', matrix.package) || format('*{0}* - Azure e2e failed', matrix.package) }}"
+            text: "${{ job.status == 'success' && format('*{0}* - Azure Terraform Module e2e passed', matrix.package) || format('*{0}* - Azure Terraform Module e2e failed', matrix.package) }}"
             attachments:
               - color: "${{ job.status == 'success' && 'good' || 'danger' }}"
                 blocks:
