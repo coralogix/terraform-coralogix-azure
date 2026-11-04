@@ -4,6 +4,7 @@
 #### **eventhub**, **blobtootel**
 ### ⚠️ Breaking Change ⚠️
 - Republishes v2.5.0 as a major version. v2.5.0 introduced a breaking change (both modules now require the `azapi` provider, `Azure/azapi ~> 2.3`, and a `provider "azapi" {}` block) but was released as a minor version because the release rules did not treat breaking changes as major. No module code changes compared to v2.5.0
+- **Upgrading from v2.x:** add the `azapi` provider and a `provider "azapi" {}` block (with the same credentials as `azurerm` if those are set explicitly in the provider block), then run `terraform init -upgrade`. Inputs are unchanged and function apps are updated in place, with a one-time restart. See "Upgrading from v2.x to v3.0" in the README
 ### 🧰 Other changes 🧰
 - Release rules now treat breaking changes (`!` or `BREAKING CHANGE`) as major releases, and changes to `.releaserc.json` trigger the release workflow
 - Root README examples: use module version `~> 3.0` instead of `1.0.13`, and `CoralogixRegion = "EU1"` instead of `"Europe"` (which the `eventhub` module rejects)
