@@ -3,6 +3,14 @@
 ## v3.0.0
 #### **eventhub**, **blobtootel**
 ### ⚠️ Breaking Change ⚠️
+- Republishes v2.5.0 as a major version. v2.5.0 introduced a breaking change (both modules now require the `azapi` provider, `Azure/azapi ~> 2.3`, and a `provider "azapi" {}` block) but was released as a minor version because the release rules did not treat breaking changes as major. No module code changes compared to v2.5.0
+### 🧰 Other changes 🧰
+- Release rules now treat breaking changes (`!` or `BREAKING CHANGE`) as major releases
+- Root README examples: use module version `~> 3.0` instead of `1.0.13`, and `CoralogixRegion = "EU1"` instead of `"Europe"` (which the `eventhub` module rejects)
+
+## v2.5.0
+#### **eventhub**, **blobtootel**
+### ⚠️ Breaking Change ⚠️
 - Both modules now require the `azapi` provider (`Azure/azapi ~> 2.3`) in addition to `azurerm`. Add a `provider "azapi" {}` block to your root configuration
 ### 🐛 Bug Fixes 🐛
 - Fixed `WEBSITE_RUN_FROM_PACKAGE` failing to apply when the function app is created on a Linux Consumption plan, because the pinned package URL redirects (GitHub release assets 302 to a signed host) and Azure refuses app creation when this setting points at a redirecting URL. It is now applied after the function app exists via `azapi_update_resource`, merged into the existing app settings (read with the `config/appsettings/list` action, since the write replaces the whole collection), mirroring the equivalent fix already shipped in `coralogix-azure-serverless`'s EventHub ARM template (v3.8.4)

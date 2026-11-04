@@ -32,9 +32,9 @@ provider "azapi" {}
 ```hcl
 module "eventhub" {
   source  = "coralogix/azure/coralogix//modules/eventhub"
-  version = "1.0.13"
+  version = "~> 3.0"
 
-  CoralogixRegion            = "Europe"
+  CoralogixRegion            = "EU1"
   CustomDomain               = < Custom FQDN if applicable >
   CoralogixPrivateKey        = < Private Key >
   CoralogixApplication       = "Azure"
@@ -53,7 +53,7 @@ module "eventhub" {
 ```hcl
 module "blobtootel" {
   source  = "coralogix/azure/coralogix//modules/blobtootel"
-  version = "1.0.13"
+  version = "~> 3.0"
 
   OtelEndpoint                   = < OTLP Endpoint >
   FunctionResourceGroupName      = < Function ResourceGroup Name >
@@ -71,7 +71,7 @@ module "blobtootel" {
 ```hcl
 module "blobstorage" {
   source  = "coralogix/azure/coralogix//modules/blobstorage"
-  version = "1.0.13"
+  version = "~> 3.0"
 
   OtelEndpoint                   = < OTLP endpoint URL, e.g. https://ingress.eu2.coralogix.com >
   CoralogixPrivateKey            = < Private Key >
@@ -93,9 +93,9 @@ module "blobstorage" {
 ```hcl
 module "storagequeue" {
   source  = "coralogix/azure/coralogix//modules/storagequeue"
-  version = "1.0.13"
+  version = "~> 3.0"
 
-  CoralogixRegion               = "Europe"
+  CoralogixRegion               = "EU1"
   CustomDomain                  = < Custom FQDN if applicable >
   CoralogixPrivateKey           = < Private Key >
   CoralogixApplication          = "Azure"
@@ -114,9 +114,9 @@ module "storagequeue" {
 ```hcl
 module "diagnosticdata" {
   source  = "coralogix/azure/coralogix//modules/diagnosticdata"
-  version = "1.0.13"
+  version = "~> 3.0"
 
-  CoralogixRegion            = "Europe"
+  CoralogixRegion            = "EU1"
   CustomDomain               = < Custom FQDN if applicable >
   CoralogixPrivateKey        = < Private Key >
   CoralogixApplication       = "Azure"
