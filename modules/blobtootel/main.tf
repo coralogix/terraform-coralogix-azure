@@ -119,6 +119,7 @@ resource "azurerm_linux_function_app" "blobtootel-function" {
     CORALOGIX_APPLICATION                    = var.CoralogixApplication
     CORALOGIX_SUBSYSTEM                      = var.CoralogixSubsystem
     EVENT_HUB_NAME                           = var.EventHubName
+    EVENT_HUB_CONSUMER_GROUP                 = azurerm_eventhub_consumer_group.eventhub-consumergroup.name
     NEWLINE_PATTERN                          = var.NewlinePattern
     PREFIX_FILTER                            = var.PrefixFilter
     SUFFIX_FILTER                            = var.SuffixFilter
