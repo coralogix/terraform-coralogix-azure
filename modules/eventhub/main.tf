@@ -129,14 +129,28 @@ resource "azurerm_linux_function_app" "eventhub-function" {
 # that redirects, and GitHub release assets 302 to a signed host, so it cannot be part of the
 # create-time app_settings above. Setting it here, after the site exists, works because the
 # runtime fetch follows the redirect normally. See coralogix-azure-serverless EventHub CHANGELOG 3.8.4.
+# The appsettings endpoint replaces the *whole* settings collection on write, and its GET does
+# not return setting values, so the write must carry every existing setting. Read them with
+# the list action (which does return values) and merge the package URL into them.
+data "azapi_resource_action" "eventhub-appsettings" {
+  type                             = "Microsoft.Web/sites/config@2022-03-01"
+  resource_id                      = "${azurerm_linux_function_app.eventhub-function.id}/config/appsettings"
+  action                           = "list"
+  method                           = "POST"
+  sensitive_response_export_values = ["properties"]
+
+  depends_on = [azurerm_linux_function_app.eventhub-function]
+}
+
 resource "azapi_update_resource" "eventhub-package-uri" {
   type        = "Microsoft.Web/sites/config@2022-03-01"
   resource_id = "${azurerm_linux_function_app.eventhub-function.id}/config/appsettings"
 
   body = {
-    properties = {
-      WEBSITE_RUN_FROM_PACKAGE = local.package_uri
-    }
+    properties = merge(
+      data.azapi_resource_action.eventhub-appsettings.sensitive_output.properties,
+      { WEBSITE_RUN_FROM_PACKAGE = local.package_uri }
+    )
   }
 
   depends_on = [azurerm_linux_function_app.eventhub-function]
